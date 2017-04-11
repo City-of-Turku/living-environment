@@ -1,0 +1,16 @@
+-r requirements.txt
+autoflake
+autopep8
+flake8
+importmagic
+ipython
+isort
+jedi
+pep8-naming
+pip-tools
+pydocstyle
+pytest
+pytest-cov
+pytest-django
+rope
+yapf
