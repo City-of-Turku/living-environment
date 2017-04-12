@@ -11,8 +11,11 @@ click==6.7                # via pip-tools
 contextlib2==0.5.4
 coverage==4.3.4           # via pytest-cov
 decorator==4.0.11         # via ipython, traitlets
+django-ckeditor==5.2.1
 django-environ==0.4.1
 django-extensions==1.7.8
+django-geojson[field]==2.10.0
+django-leaflet==0.22.0
 django==1.11
 djangorestframework==3.6.2
 drf-extensions==0.3.1
@@ -23,6 +26,7 @@ ipython-genutils==0.2.0   # via traitlets
 ipython==5.3.0
 isort==4.2.5
 jedi==0.10.2
+jsonfield==2.0.1
 mccabe==0.6.1             # via flake8
 packaging==16.8           # via setuptools
 pep8-naming==0.4.1

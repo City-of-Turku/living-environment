@@ -1,4 +1,5 @@
 -r requirements.txt
+django-extensions
 autoflake
 autopep8
 flake8
