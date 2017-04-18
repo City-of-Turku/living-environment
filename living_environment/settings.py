@@ -60,7 +60,7 @@ TIME_ZONE = 'Europe/Helsinki'
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
-
+CKEDITOR_UPLOAD_PATH = "uploads/"
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -70,6 +70,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'raven.contrib.django.raven_compat',
+    'leaflet',
+    'djgeojson',
+    'django_extensions',
+    'nested_admin',
+    'assignments',
+    'ckeditor',
+    'ckeditor_uploader'
 ]
 
 MIDDLEWARE_CLASSES = [
