@@ -1,18 +1,36 @@
 from django.contrib import admin
-from assignments.models import Assignment, Section, OpenTextTask
-from nested_admin.nested import NestedModelAdminMixin, NestedStackedInline, NestedTabularInline
+from assignments.models import Assignment, Section, OpenTextTask, BudgetingTask, BudgetingTarget
+from nested_admin.nested import NestedModelAdminMixin, NestedTabularInline
 from leaflet.admin import LeafletGeoAdmin
+from django.utils.translation import ugettext as _
 
 
 class OpenTextInline(NestedTabularInline):
-    extra = 1
+    extra = 0
     model = OpenTextTask
+
+
+@admin.register(BudgetingTarget)
+class BudgetingTargetAdmin(admin.ModelAdmin):
+    fieldsets = (
+        (None, {
+            'fields': ('name', 'unit_price', 'reference_amount', 'icon')
+        }),
+        (_('Amount range'), {
+            'fields': [('min_amount', 'max_amount')]
+        })
+    )
+
+
+class BudgetingTaskInline(NestedTabularInline):
+    extra = 0
+    model = BudgetingTask
 
 
 class SectionInline(NestedTabularInline):
     extra = 1
     inlines = [
-        OpenTextInline
+        OpenTextInline, BudgetingTaskInline
     ]
     model = Section
 
@@ -30,6 +48,7 @@ class AssignmentAdmin(NestedModelAdminMixin, LeafletGeoAdmin):
     prepopulated_fields = {
         'slug': ('name',)
     }
+
 
 
 

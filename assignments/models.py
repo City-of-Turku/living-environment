@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.translation import ugettext as _
 from ckeditor_uploader.fields import RichTextUploadingField
 from djgeojson.fields import GeometryField
+from django.shortcuts import reverse
 
 
 class Assignment(models.Model):
@@ -30,6 +31,9 @@ class Assignment(models.Model):
     def __str__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return reverse('assignments:assignment-detail', args=[self.slug])
+
 
 class Section(models.Model):
     """
@@ -45,20 +49,75 @@ class Section(models.Model):
         verbose_name_plural = _('sections')
 
     def __str__(self):
-        return 'Section: {}'.format(self.title)
+        return self.title
+
+    def get_absolute_url(self):
+        return reverse('assignments:section-detail', args=[self.assignment.slug, self.pk])
 
 
-class OpenTextTask(models.Model):
+class BaseTask(models.Model):
+    """
+    Abstract model for all tasks.
+    """
+    section = models.ForeignKey(Section, related_name='%(class)ss')
+
+    class Meta:
+        abstract = True
+
+
+class OpenTextTask(BaseTask):
     """
     Simple question task where the answer is placed in text area
     """
-    section = models.ForeignKey(Section, related_name='open_text_tasks')
     question = models.TextField()
 
     class Meta:
         verbose_name = _('open text task')
         verbose_name_plural = _('open text tasks')
 
-    def __str__(self):
-        return 'Question: {}'.format(self.question)
 
+class BudgetingTarget(models.Model):
+    """
+    Budget task targets. Not all the fields have to be defined here. Reference amount refers to official amount spent
+    on this target. Min and max amount should be defined for targets with value in a certain range.
+    """
+
+    name = models.CharField(_('name'), max_length=256)
+    unit_price = models.DecimalField(_('price'), max_digits=10, decimal_places=2, default=0)
+    reference_amount = models.DecimalField(_('reference amount'), max_digits=10, decimal_places=2, default=0)
+    min_amount = models.DecimalField(_('min amount'), max_digits=10, decimal_places=2, default=0)
+    max_amount = models.DecimalField(_('max amount'), max_digits=10, decimal_places=2, null=True, blank=True)
+    icon = models.FileField(upload_to='target/icons/', blank=True, default='target/icons/default.png')
+
+    class Meta:
+        verbose_name = _('budget target')
+        verbose_name_plural = _('budget targets')
+
+    def __str__(self):
+        return self.name
+
+
+class BudgetingTask(BaseTask):
+    """
+    Budget tasks are related to section and consists of one or more Budgeting targets
+    """
+    UNIT_HA = 0
+    UNIT_PCS = 1
+    UNIT_CHOICES = (
+        (UNIT_HA, _('ha')),
+        (UNIT_PCS, _('pcs'))
+    )
+
+    name = models.CharField(_('name'), max_length=256)
+    unit = models.IntegerField(choices=UNIT_CHOICES, default=UNIT_HA)
+    amount_of_consumption = models.DecimalField(_('amount of consumption'), max_digits=10, decimal_places=2,
+                                                help_text=_('Number of units required to be spent on the task'),
+                                                default=0)
+    targets = models.ManyToManyField(BudgetingTarget, related_name='budgeting_tasks')
+
+    class Meta:
+        verbose_name = _('budgeting task')
+        verbose_name_plural = _('budgeting tasks')
+
+    def __str__(self):
+        return self.name
