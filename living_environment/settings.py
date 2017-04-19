@@ -73,10 +73,12 @@ INSTALLED_APPS = [
     'leaflet',
     'djgeojson',
     'django_extensions',
+    'rest_framework',
+    'rest_framework_extensions',
     'nested_admin',
-    'assignments',
     'ckeditor',
-    'ckeditor_uploader'
+    'ckeditor_uploader',
+    'assignments',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -89,6 +91,12 @@ MIDDLEWARE_CLASSES = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
 ]
+
+# Setup Django Debug Toolbar
+if DEBUG:
+    INSTALLED_APPS += ['debug_toolbar']
+    INTERNAL_IPS = ['127.0.0.1', 'localhost']
+    MIDDLEWARE_CLASSES.append('debug_toolbar.middleware.DebugToolbarMiddleware')
 
 TEMPLATES = [
     {

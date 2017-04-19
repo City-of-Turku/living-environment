@@ -14,11 +14,14 @@ decorator==4.0.11         # via ipython, traitlets
 django-ckeditor==5.2.1
 django-environ==0.4.1
 django-extensions==1.7.8
-django-geojson[field]==2.10.0
+django-geojson==2.10.0
 django-leaflet==0.22.0
+django-nested-admin==3.0.17
 django==1.11
 djangorestframework==3.6.2
 drf-extensions==0.3.1
+factory-boy==2.8.1
+faker==0.7.11             # via factory-boy
 first==2.0.1              # via pip-tools
 flake8==3.3.0
 importmagic==0.1.7
@@ -45,6 +48,8 @@ pyparsing==2.2.0          # via packaging
 pytest-cov==2.4.0
 pytest-django==3.1.2
 pytest==3.0.7
+python-dateutil==2.6.0    # via faker
+python-monkey-business==1.0.0
 pytz==2017.2
 raven==6.0.0
 rope==0.10.5
