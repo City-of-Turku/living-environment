@@ -2,7 +2,7 @@ from ckeditor_uploader.fields import RichTextUploadingField
 from django.db import models
 from django.shortcuts import reverse
 from django.utils.translation import ugettext as _
-from djgeojson.fields import GeometryField
+from djgeojson.fields import GeometryField, PointField
 
 
 class Assignment(models.Model):
@@ -121,3 +121,30 @@ class BudgetingTask(BaseTask):
 
     def __str__(self):
         return self.name
+
+
+class Student(models.Model):
+    assignment = models.ForeignKey(Assignment, related_name='students')
+    school = models.CharField(max_length=256)
+    school_class = models.CharField(max_length=128)
+
+
+class OpenTextAnswer(models.Model):
+    """
+    Student answer for OpenTextTask
+    """
+    student = models.ForeignKey(Student, related_name='open_text_answers')
+    task = models.ForeignKey(OpenTextTask)
+    answer = models.TextField()
+
+
+class BudgetingTargetAnswer(models.Model):
+    """
+    Student answer for BudgetingTarget. We set references to both task and target, in order to
+    uniquely connect budgeting answer with related task
+    """
+    student = models.ForeignKey(Student, related_name='budgeting_answers')
+    task = models.ForeignKey(BudgetingTask, related_name='budgeting_answers')
+    target = models.ForeignKey(BudgetingTarget, related_name='budgeting_answers')
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    point = PointField(null=True, blank=True)
