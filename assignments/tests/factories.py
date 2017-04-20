@@ -59,3 +59,26 @@ class BudgetingTaskFactory(factory.DjangoModelFactory):
         if extracted:
             for target in extracted:
                 self.targets.add(target)
+
+
+class SchoolFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.School
+
+    name = factory.Sequence(lambda n: 'school_%s' % n)
+    assignment = factory.SubFactory(AssignmentFactory)
+
+    @factory.post_generation
+    def classes(self, create, extracted, **kwargs):
+        if not create:
+            return
+        if extracted:
+            for school_class in extracted:
+                self.classes.add(school_class)
+
+
+class SchoolClassFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.SchoolClass
+
+    name = factory.Sequence(lambda n: 'class_%s' % n)

@@ -3,7 +3,7 @@ from django.utils.translation import ugettext as _
 from leaflet.admin import LeafletGeoAdmin
 from nested_admin.nested import NestedModelAdminMixin, NestedTabularInline
 
-from assignments.models import Assignment, BudgetingTarget, BudgetingTask, OpenTextTask, Section
+from assignments.models import Assignment, BudgetingTarget, BudgetingTask, OpenTextTask, Section, School, SchoolClass
 
 
 class OpenTextInline(NestedTabularInline):
@@ -36,10 +36,16 @@ class SectionInline(NestedTabularInline):
     model = Section
 
 
+class SchoolInline(NestedTabularInline):
+    extra = 1
+    model = School
+
+
 @admin.register(Assignment)
 class AssignmentAdmin(NestedModelAdminMixin, LeafletGeoAdmin):
     inlines = [
-        SectionInline
+        SchoolInline,
+        SectionInline,
     ]
     list_display = ['name', 'status', 'budget']
     list_filter = ('name', 'status')
@@ -49,3 +55,8 @@ class AssignmentAdmin(NestedModelAdminMixin, LeafletGeoAdmin):
     prepopulated_fields = {
         'slug': ('name',)
     }
+
+
+@admin.register(SchoolClass)
+class SchoolClassAdmin(admin.ModelAdmin):
+    fields = ['name']
