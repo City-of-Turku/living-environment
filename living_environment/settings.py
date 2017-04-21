@@ -61,6 +61,13 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 CKEDITOR_UPLOAD_PATH = "uploads/"
+STATICFILES_DIRS = [checkout_dir('static')]
+LEAFLET_CONFIG = {
+    'TILES': [],
+    'DEFAULT_CENTER': [60.4629060928519,22.259694757206415],
+    'DEFAULT_ZOOM': 16,
+}
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -70,11 +77,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'raven.contrib.django.raven_compat',
+    'assignments',
     'leaflet',
     'djgeojson',
     'django_extensions',
     'nested_admin',
-    'assignments',
     'ckeditor',
     'ckeditor_uploader'
 ]
