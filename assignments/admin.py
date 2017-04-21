@@ -1,8 +1,9 @@
 from django.contrib import admin
-from assignments.models import Assignment, Section, OpenTextTask, BudgetingTask, BudgetingTarget
-from nested_admin.nested import NestedModelAdminMixin, NestedTabularInline
-from leaflet.admin import LeafletGeoAdmin
 from django.utils.translation import ugettext as _
+from leaflet.admin import LeafletGeoAdmin
+from nested_admin.nested import NestedModelAdminMixin, NestedTabularInline
+
+from assignments.models import Assignment, BudgetingTarget, BudgetingTask, OpenTextTask, Section
 
 
 class OpenTextInline(NestedTabularInline):
@@ -48,9 +49,3 @@ class AssignmentAdmin(NestedModelAdminMixin, LeafletGeoAdmin):
     prepopulated_fields = {
         'slug': ('name',)
     }
-
-
-
-
-
-

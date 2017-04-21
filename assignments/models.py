@@ -1,8 +1,8 @@
-from django.db import models
-from django.utils.translation import ugettext as _
 from ckeditor_uploader.fields import RichTextUploadingField
-from djgeojson.fields import GeometryField
+from django.db import models
 from django.shortcuts import reverse
+from django.utils.translation import ugettext as _
+from djgeojson.fields import GeometryField
 
 
 class Assignment(models.Model):
