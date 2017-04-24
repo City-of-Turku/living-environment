@@ -88,7 +88,6 @@ INSTALLED_APPS = [
     'nested_admin',
     'ckeditor',
     'ckeditor_uploader',
-    'assignments',
 ]
 
 MIDDLEWARE_CLASSES = [
