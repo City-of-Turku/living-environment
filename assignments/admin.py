@@ -29,6 +29,9 @@ class BudgetingTaskInline(NestedTabularInline):
 
 
 class SectionInline(NestedTabularInline):
+    class Media:
+        js = ("admin/ckeditor-nested-inline-fix.js",)
+
     extra = 1
     inlines = [
         OpenTextInline, BudgetingTaskInline
