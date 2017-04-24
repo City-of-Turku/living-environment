@@ -1,7 +1,8 @@
 -r requirements.txt
-django-extensions
 autoflake
 autopep8
+django-debug-toolbar
+django-extensions
 flake8
 importmagic
 ipython
