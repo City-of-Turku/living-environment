@@ -6,7 +6,7 @@ django-extensions~=1.7.8
 jsonfield~=2.0.1
 django-geojson~=2.10.0
 django-leaflet~=0.22.0
-django-ckeditor~=5.2.1
+django-ckeditor~=5.2.2
 psycopg2
 raven~=6.0
 django-nested-admin
