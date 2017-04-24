@@ -24,6 +24,7 @@ env = environ.Env(
     CACHE_URL=(str, 'locmemcache://'),
     EMAIL_URL=(str, 'consolemail://'),
     SENTRY_DSN=(str, ''),
+    CORS_ORIGIN_WHITELIST=(list, []),
 )
 if os.path.exists(env_file):
     env.read_env(env_file)
@@ -83,6 +84,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'rest_framework',
     'rest_framework_extensions',
+    'corsheaders',
     'nested_admin',
     'ckeditor',
     'ckeditor_uploader',
@@ -91,6 +93,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE_CLASSES = [
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -121,3 +124,7 @@ TEMPLATES = [
         },
     },
 ]
+
+# CORS
+CORS_ORIGIN_ALLOW_ALL = DEBUG
+CORS_ORIGIN_WHITELIST = env.list('CORS_ORIGIN_WHITELIST')
