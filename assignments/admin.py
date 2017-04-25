@@ -3,7 +3,7 @@ from django.utils.translation import ugettext as _
 from leaflet.admin import LeafletGeoAdmin
 from nested_admin.nested import NestedModelAdminMixin, NestedTabularInline
 
-from assignments.models import Assignment, BudgetingTarget, BudgetingTask, OpenTextTask, Section, School, SchoolClass
+from assignments.models import Assignment, BudgetingTarget, BudgetingTask, OpenTextTask, School, SchoolClass, Section
 
 
 class OpenTextInline(NestedTabularInline):

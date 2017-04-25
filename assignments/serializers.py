@@ -1,8 +1,9 @@
+from django.db.models import Count
 from rest_framework import serializers
 
 from assignments.models import (
-    Assignment, BudgetingTarget, BudgetingTargetAnswer, BudgetingTask, OpenTextAnswer, OpenTextTask, Section, School,
-    SchoolClass, Student
+    Assignment, BudgetingTarget, BudgetingTargetAnswer, BudgetingTask, OpenTextAnswer, OpenTextTask, School,
+    SchoolClass, Section, Submission
 )
 
 
@@ -13,6 +14,7 @@ class OpenTextTaskSerializer(serializers.ModelSerializer):
 
 
 class BudgetingTargetSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = BudgetingTarget
         fields = ['id', 'name', 'unit_price', 'reference_amount', 'min_amount', 'max_amount', 'icon']
@@ -66,7 +68,7 @@ class AssignmentSerializer(serializers.ModelSerializer):
 class OpenTextAnswerSerializer(serializers.ModelSerializer):
     class Meta:
         model = OpenTextAnswer
-        fields = ['task', 'answer']
+        fields = ['id', 'task', 'answer']
 
 
 class BudgetingTargetAnswerSerializer(serializers.ModelSerializer):
@@ -74,7 +76,7 @@ class BudgetingTargetAnswerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BudgetingTargetAnswer
-        fields = ['task', 'target', 'amount', 'point']
+        fields = ['id', 'task', 'target', 'amount', 'point']
 
     def validate_point(self, data):
         if not data:
@@ -105,12 +107,75 @@ class SubmitAnswersSerializer(serializers.Serializer):
         return data
 
     def save(self):
-        student_instance = Student.objects.create(school=self.validated_data['school'],
-                                                  school_class=self.validated_data['school_class'])
+        submission_instance = Submission.objects.create(school=self.validated_data['school'],
+                                                        school_class=self.validated_data['school_class'])
         open_text_answers = [OpenTextAnswer(
-            student=student_instance, **open_text_data) for open_text_data in self.validated_data['open_text_tasks']]
+            submission=submission_instance,
+            **open_text_data) for open_text_data in self.validated_data['open_text_tasks']]
         OpenTextAnswer.objects.bulk_create(open_text_answers)
         budgeting_target_answers = [BudgetingTargetAnswer(
-            student=student_instance,
+            submission=submission_instance,
             **budgeting_text_data) for budgeting_text_data in self.validated_data['budgeting_targets']]
         BudgetingTargetAnswer.objects.bulk_create(budgeting_target_answers)
+
+
+# serializers used for getting answers for report generation
+class ReportOpenTextTaskSerializer(serializers.ModelSerializer):
+    answers = serializers.SerializerMethodField()
+
+    class Meta:
+        model = OpenTextTask
+        fields = ['question', 'answers']
+
+    def get_answers(self, obj):
+        answers = obj.get_answers(**self.context['query_params'])
+        serializer = OpenTextAnswerSerializer(instance=answers, many=True)
+        return serializer.data
+
+
+class ReportBudgetingTargetSerializer(serializers.ModelSerializer):
+    target = BudgetingTargetSerializer()
+
+    class Meta:
+        model = BudgetingTargetAnswer
+        fields = ['amount', 'point', 'target']
+
+
+class ReportBudgetingTaskSerializer(serializers.ModelSerializer):
+    answers = serializers.SerializerMethodField()
+
+    class Meta:
+        model = BudgetingTask
+        fields = ['name', 'answers']
+
+    def get_answers(self, obj):
+        answers = obj.get_answers(**self.context['query_params'])
+        serializer = ReportBudgetingTargetSerializer(instance=answers, many=True)
+        return serializer.data
+
+
+class ReportSectionSerializer(serializers.ModelSerializer):
+    open_text_tasks = ReportOpenTextTaskSerializer(many=True, source='opentexttasks')
+    budgeting_tasks = ReportBudgetingTaskSerializer(many=True, source='budgetingtasks')
+
+    class Meta:
+        model = Section
+        fields = ['title', 'open_text_tasks', 'budgeting_tasks']
+
+
+class ReportAssignmentSerializer(serializers.ModelSerializer):
+    submissions = serializers.SerializerMethodField()
+    sections = ReportSectionSerializer(many=True)
+
+    class Meta:
+        model = Assignment
+        fields = ['name', 'sections', 'submissions']
+
+    def get_submissions(self, obj):
+        submissions = obj.get_submissions(**self.context['query_params'])
+        submissions_per_school = submissions.values('school__name').annotate(count=Count('id')).order_by()
+        submissions_per_class = submissions.values('school_class__name').annotate(count=Count('id')).order_by()
+        return {
+            'per_school': submissions_per_school,
+            'per_class': submissions_per_class
+        }
