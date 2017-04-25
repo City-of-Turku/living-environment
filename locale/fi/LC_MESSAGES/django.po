@@ -1,0 +1,152 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-04-25 11:40+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: .\assignments\admin.py:20
+msgid "Amount range"
+msgstr "Arvon rajaus"
+
+#: .\assignments\apps.py:7 .\assignments\models.py:31
+msgid "Assignments"
+msgstr "Tehtävänannot"
+
+#: .\assignments\models.py:18
+msgid "Open"
+msgstr "Avoinna"
+
+#: .\assignments\models.py:19
+msgid "Closed"
+msgstr "Suljettu"
+
+#: .\assignments\models.py:22 .\assignments\models.py:87
+#: .\assignments\models.py:113
+msgid "name"
+msgstr "nimi"
+
+#: .\assignments\models.py:23
+msgid "area"
+msgstr "alue"
+
+#: .\assignments\models.py:24
+msgid "status"
+msgstr "tila"
+
+#: .\assignments\models.py:25
+msgid "budget"
+msgstr "budjetti"
+
+#: .\assignments\models.py:27
+msgid "The user-friendly URL identifier ex. www.example.com/runosmaen-koulu"
+msgstr "Käyttäjäystävällinen URL-tunniste ex. www.malli.com/runosmaen-koulu"
+
+#: .\assignments\models.py:30 .\assignments\models.py:46
+msgid "Assignment"
+msgstr "Tehtävänanto"
+
+#: .\assignments\models.py:44
+msgid "title"
+msgstr "otsikko"
+
+#: .\assignments\models.py:45
+msgid "description"
+msgstr "kuvaus"
+
+#: .\assignments\models.py:50
+msgid "Section"
+msgstr "Tehtäväosio"
+
+#: .\assignments\models.py:51
+msgid "Sections"
+msgstr "Tehtävänosiot"
+
+#: .\assignments\models.py:74
+msgid "question"
+msgstr "kysymys"
+
+#: .\assignments\models.py:77
+msgid "open text task"
+msgstr "Tekstikysymys"
+
+#: .\assignments\models.py:78
+msgid "open text tasks"
+msgstr "Tekstikysymykset"
+
+#: .\assignments\models.py:88
+msgid "price"
+msgstr "hinta"
+
+#: .\assignments\models.py:89
+msgid "reference amount"
+msgstr "viitearvo"
+
+#: .\assignments\models.py:90
+msgid "min amount"
+msgstr "pienin arvo"
+
+#: .\assignments\models.py:91
+msgid "max amount"
+msgstr "suurin arvo"
+
+#: .\assignments\models.py:92
+msgid "icon"
+msgstr "ikoni"
+
+#: .\assignments\models.py:95
+msgid "budget target"
+msgstr "budjettikohde"
+
+#: .\assignments\models.py:96 .\assignments\models.py:118
+msgid "budget targets"
+msgstr "budjettikohteet"
+
+#: .\assignments\models.py:109
+msgid "ha"
+msgstr ""
+
+#: .\assignments\models.py:110
+msgid "pcs"
+msgstr "kpl"
+
+#: .\assignments\models.py:114
+msgid "unit"
+msgstr "yksikkö"
+
+#: .\assignments\models.py:115
+msgid "amount of consumption"
+msgstr "Kulutettava määrä"
+
+#: .\assignments\models.py:116
+msgid "Number of units required to be spent on the task"
+msgstr "Tehtävään tarvittavien yksiköiden lukumäärä"
+
+#: .\assignments\models.py:121
+msgid "budgeting task"
+msgstr "Budjetointitehtävä"
+
+#: .\assignments\models.py:122
+msgid "budgeting tasks"
+msgstr "Budjetointitehtävät"
+
+#: .\living_environment\settings.py:102
+msgid "Finnish"
+msgstr "Suomeksi"
+
+#: .\living_environment\settings.py:103
+msgid "English"
+msgstr "Englanniksi"

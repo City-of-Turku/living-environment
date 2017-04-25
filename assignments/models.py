@@ -1,7 +1,8 @@
-from ckeditor_uploader.fields import RichTextUploadingField
 from django.db import models
 from django.shortcuts import reverse
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
+
+from ckeditor_uploader.fields import RichTextUploadingField
 from djgeojson.fields import GeometryField
 
 
@@ -22,11 +23,12 @@ class Assignment(models.Model):
     area = GeometryField(_('area'))
     status = models.IntegerField(_('status'), choices=STATUS_CHOICES, default=STATUS_OPEN)
     budget = models.DecimalField(_('budget'), max_digits=10, decimal_places=2, default=0)
-    slug = models.SlugField(max_length=80, unique=True)
+    slug = models.SlugField(max_length=80, unique=True,
+                            help_text=_('The user-friendly URL identifier ex. www.example.com/runosmaen-koulu'))
 
     class Meta:
-        verbose_name = _('assignment')
-        verbose_name_plural = _('assignments')
+        verbose_name = _('Assignment')
+        verbose_name_plural = _('Assignments')
 
     def __str__(self):
         return self.name
@@ -41,12 +43,12 @@ class Section(models.Model):
     """
     title = models.CharField(_('title'), max_length=256)
     description = RichTextUploadingField(_('description'), blank=True)
-    assignment = models.ForeignKey(Assignment, related_name='sections')
+    assignment = models.ForeignKey(Assignment, related_name='sections', verbose_name=_('Assignment'))
     video = models.URLField(null=True, blank=True)
 
     class Meta:
-        verbose_name = _('section')
-        verbose_name_plural = _('sections')
+        verbose_name = _('Section')
+        verbose_name_plural = _('Sections')
 
     def __str__(self):
         return self.title
@@ -69,7 +71,7 @@ class OpenTextTask(BaseTask):
     """
     Simple question task where the answer is placed in text area
     """
-    question = models.TextField()
+    question = models.TextField(_('question'))
 
     class Meta:
         verbose_name = _('open text task')
@@ -87,7 +89,7 @@ class BudgetingTarget(models.Model):
     reference_amount = models.DecimalField(_('reference amount'), max_digits=10, decimal_places=2, default=0)
     min_amount = models.DecimalField(_('min amount'), max_digits=10, decimal_places=2, default=0)
     max_amount = models.DecimalField(_('max amount'), max_digits=10, decimal_places=2, null=True, blank=True)
-    icon = models.FileField(upload_to='target/icons/', blank=True, default='target/icons/default.png')
+    icon = models.FileField(_('icon'), upload_to='target/icons/', blank=True, default='target/icons/default.png')
 
     class Meta:
         verbose_name = _('budget target')
@@ -109,11 +111,11 @@ class BudgetingTask(BaseTask):
     )
 
     name = models.CharField(_('name'), max_length=256)
-    unit = models.IntegerField(choices=UNIT_CHOICES, default=UNIT_HA)
+    unit = models.IntegerField(_('unit'), choices=UNIT_CHOICES, default=UNIT_HA)
     amount_of_consumption = models.DecimalField(_('amount of consumption'), max_digits=10, decimal_places=2,
                                                 help_text=_('Number of units required to be spent on the task'),
                                                 default=0)
-    targets = models.ManyToManyField(BudgetingTarget, related_name='budgeting_tasks')
+    targets = models.ManyToManyField(BudgetingTarget, related_name='budgeting_tasks', verbose_name=_('budget targets'))
 
     class Meta:
         verbose_name = _('budgeting task')
