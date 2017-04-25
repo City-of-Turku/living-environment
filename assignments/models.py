@@ -20,6 +20,8 @@ class Assignment(models.Model):
     )
 
     name = models.CharField(_('name'), max_length=128, unique=True)
+    header = models.CharField(_('header'), max_length=255, null=True)
+    description = RichTextUploadingField(_('description'), blank=True)
     area = GeometryField(_('area'))
     status = models.IntegerField(_('status'), choices=STATUS_CHOICES, default=STATUS_OPEN)
     budget = models.DecimalField(_('budget'), max_digits=10, decimal_places=2, default=0)

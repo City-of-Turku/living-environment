@@ -50,7 +50,7 @@ class AssignmentAdmin(NestedModelAdminMixin, LeafletGeoAdmin):
         SchoolInline,
         SectionInline,
     ]
-    list_display = ['name', 'status', 'budget']
+    list_display = ['name', 'header', 'status', 'budget']
     list_filter = ('name', 'status')
     search_fields = ['name']
     actions_on_bottom = True
