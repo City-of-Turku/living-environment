@@ -1,12 +1,12 @@
 from django.contrib import admin
 from django.utils.translation import ugettext as _
 from leaflet.admin import LeafletGeoAdmin
-from nested_admin.nested import NestedModelAdminMixin, NestedTabularInline
+from nested_admin.nested import NestedModelAdminMixin, NestedStackedInline
 
 from assignments.models import Assignment, BudgetingTarget, BudgetingTask, OpenTextTask, Section
 
 
-class OpenTextInline(NestedTabularInline):
+class OpenTextInline(NestedStackedInline):
     extra = 0
     model = OpenTextTask
 
@@ -23,12 +23,12 @@ class BudgetingTargetAdmin(admin.ModelAdmin):
     )
 
 
-class BudgetingTaskInline(NestedTabularInline):
+class BudgetingTaskInline(NestedStackedInline):
     extra = 0
     model = BudgetingTask
 
 
-class SectionInline(NestedTabularInline):
+class SectionInline(NestedStackedInline):
     class Media:
         js = ("admin/ckeditor-nested-inline-fix.js",)
 
