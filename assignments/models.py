@@ -57,10 +57,13 @@ class Section(models.Model):
     description = RichTextUploadingField(_('description'), blank=True)
     assignment = models.ForeignKey(Assignment, related_name='sections', verbose_name=_('Assignment'))
     video = models.URLField(null=True, blank=True)
+    order_number = models.IntegerField(_('order number'), default=0,
+                                       help_text=_('Order in which sections are shown'))
 
     class Meta:
         verbose_name = _('Section')
         verbose_name_plural = _('Sections')
+        ordering = ['order_number', 'title']
 
     def __str__(self):
         return self.title
