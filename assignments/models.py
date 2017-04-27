@@ -2,7 +2,7 @@ from ckeditor_uploader.fields import RichTextUploadingField
 from django.db import models
 from django.shortcuts import reverse
 from django.utils.translation import ugettext as _
-from djgeojson.fields import GeometryField
+from djgeojson.fields import GeometryField, PointField
 
 
 class Assignment(models.Model):
@@ -121,3 +121,55 @@ class BudgetingTask(BaseTask):
 
     def __str__(self):
         return self.name
+
+
+class SchoolClass(models.Model):
+    name = models.CharField(max_length=255)
+
+    class Meta:
+        verbose_name = _('class')
+        verbose_name_plural = _('classes')
+
+    def __str__(self):
+        return self.name
+
+
+class School(models.Model):
+    name = models.CharField(max_length=255)
+    assignment = models.ForeignKey(Assignment, related_name='schools')
+    classes = models.ManyToManyField(SchoolClass, related_name='schools')
+
+    class Meta:
+        verbose_name = _('school')
+        verbose_name_plural = _('schools')
+
+    def __str__(self):
+        return self.name
+
+
+class Student(models.Model):
+    school = models.ForeignKey(School, related_name='%(class)ss')
+    school_class = models.ForeignKey(SchoolClass, related_name='%(class)ss')
+
+
+class OpenTextAnswer(models.Model):
+    """
+    Answer on OpenTextTask
+    """
+
+    student = models.ForeignKey(Student, related_name='open_text_answers')
+    task = models.ForeignKey(OpenTextTask, related_name='open_text_answers')
+    answer = models.TextField()
+
+
+class BudgetingTargetAnswer(models.Model):
+    """
+    Answer on BudgetingTarget. We set references to both task and target, in order to
+    uniquely connect budgeting answer with related task
+    """
+
+    student = models.ForeignKey(Student, related_name='budgeting_answers')
+    task = models.ForeignKey(BudgetingTask, related_name='budgeting_answers')
+    target = models.ForeignKey(BudgetingTarget, related_name='budgeting_answers')
+    amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    point = PointField(null=True, blank=True)
