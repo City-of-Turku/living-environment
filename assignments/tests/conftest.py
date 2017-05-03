@@ -3,8 +3,8 @@ from django.shortcuts import reverse
 
 from assignments.models import Assignment
 from assignments.tests.factories import (
-    AssignmentFactory, BudgetingTargetFactory, BudgetingTaskFactory, OpenTextTaskFactory, SectionFactory, SchoolFactory,
-    SchoolClassFactory
+    AssignmentFactory, BudgetingTargetAnswerFactory, BudgetingTargetFactory, BudgetingTaskFactory,
+    OpenTextAnswerFactory, OpenTextTaskFactory, SchoolClassFactory, SchoolFactory, SectionFactory, SubmissionFactory
 )
 
 
@@ -61,3 +61,21 @@ def answers_submit_data():
             }
         ]
     }
+
+
+@pytest.fixture
+def answers():
+    assignment = AssignmentFactory()
+    section = SectionFactory(assignment=assignment)
+    section_2 = SectionFactory(assignment=assignment)
+    class_1 = SchoolClassFactory()
+    class_2 = SchoolClassFactory()
+    school = SchoolFactory(assignment=assignment, classes=(class_1, class_2))
+    submission = SubmissionFactory(school=school)
+    open_text_task = OpenTextTaskFactory(section=section)
+    OpenTextAnswerFactory(submission=submission, task=open_text_task)
+    budgeting_target_1 = BudgetingTargetFactory()
+    budgeting_target_2 = BudgetingTargetFactory()
+    budgeting_task = BudgetingTaskFactory(section=section_2, targets=(budgeting_target_1, budgeting_target_2))
+    BudgetingTargetAnswerFactory(task=budgeting_task, target=budgeting_target_1, submission=submission)
+    BudgetingTargetAnswerFactory(task=budgeting_task, target=budgeting_target_2, submission=submission)

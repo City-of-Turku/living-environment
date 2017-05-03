@@ -9,5 +9,6 @@ api_urls = router.urls
 
 urlpatterns = [
     url(r'^api/', include(api_urls)),
-    url(r'^api/answers/(?P<slug>[-\w]+)/$', SubmitAnswersViewSet.as_view({'post': 'create'}), name='answers'),
+    url(r'^api/answers/(?P<slug>[-\w]+)/$', SubmitAnswersViewSet.as_view({'post': 'create', 'get': 'list'}),
+        name='answers'),
 ]

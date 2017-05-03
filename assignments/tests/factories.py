@@ -82,3 +82,31 @@ class SchoolClassFactory(factory.DjangoModelFactory):
         model = models.SchoolClass
 
     name = factory.Sequence(lambda n: 'class_%s' % n)
+
+
+class SubmissionFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.Submission
+
+    school = factory.SubFactory(SchoolFactory)
+    school_class = factory.SubFactory(SchoolClassFactory)
+
+
+class OpenTextAnswerFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.OpenTextAnswer
+
+    submission = factory.SubFactory(SubmissionFactory)
+    task = factory.SubFactory(OpenTextTaskFactory)
+    answer = factory.fuzzy.FuzzyText()
+
+
+class BudgetingTargetAnswerFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.BudgetingTargetAnswer
+
+    submission = factory.SubFactory(SubmissionFactory)
+    task = factory.SubFactory(BudgetingTaskFactory)
+    target = factory.SubFactory(BudgetingTargetFactory)
+    amount = factory.fuzzy.FuzzyDecimal(2, 20, precision=2)
+    point = '{"type": "Point", "coordinates": [100, 200]}'
