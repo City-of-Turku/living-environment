@@ -3,7 +3,7 @@ from django.shortcuts import reverse
 from django.utils.translation import ugettext_lazy as _
 
 from ckeditor_uploader.fields import RichTextUploadingField
-from djgeojson.fields import GeometryField
+from djgeojson.fields import GeometryField, PointField
 
 
 class Assignment(models.Model):
@@ -35,6 +35,17 @@ class Assignment(models.Model):
 
     def get_absolute_url(self):
         return reverse('assignments:assignment-detail', args=[self.slug])
+
+    def get_submissions(self, school=None, school_class=None):
+        """
+        Get all submissions related to the assignment filtered by school or school_class if given.
+        """
+        submissions = Submission.objects.all()
+        if school:
+            submissions = submissions.filter(school=school)
+        if school_class:
+            submissions = submissions.filter(school_class=school_class)
+        return submissions
 
 
 class Section(models.Model):
@@ -76,6 +87,17 @@ class OpenTextTask(BaseTask):
     class Meta:
         verbose_name = _('open text task')
         verbose_name_plural = _('open text tasks')
+
+    def get_answers(self, school=None, school_class=None):
+        """
+        Get open text answers filtered by school and class
+        """
+        answers = self.open_text_answers.all()
+        if school:
+            answers = answers.filter(submission__school__name=school)
+        if school_class:
+            answers = answers.filter(submission__school_class__name=school_class)
+        return answers
 
 
 class BudgetingTarget(models.Model):
@@ -123,3 +145,66 @@ class BudgetingTask(BaseTask):
 
     def __str__(self):
         return self.name
+
+    def get_answers(self, school=None, school_class=None):
+        """
+        Get budgeting task answers filtered by school and class
+        """
+        answers = self.budgeting_answers.all()
+        if school:
+            answers = answers.filter(submission__school__name=school)
+        if school_class:
+            answers = answers.filter(submission__school_class__name=school_class)
+        return answers
+
+
+class SchoolClass(models.Model):
+    name = models.CharField(max_length=255)
+
+    class Meta:
+        verbose_name = _('class')
+        verbose_name_plural = _('classes')
+
+    def __str__(self):
+        return self.name
+
+
+class School(models.Model):
+    name = models.CharField(max_length=255)
+    assignment = models.ForeignKey(Assignment, related_name='schools')
+    classes = models.ManyToManyField(SchoolClass, related_name='schools')
+
+    class Meta:
+        verbose_name = _('school')
+        verbose_name_plural = _('schools')
+
+    def __str__(self):
+        return self.name
+
+
+class Submission(models.Model):
+    school = models.ForeignKey(School, related_name='%(class)ss')
+    school_class = models.ForeignKey(SchoolClass, related_name='%(class)ss')
+
+
+class OpenTextAnswer(models.Model):
+    """
+    Answer on OpenTextTask
+    """
+
+    submission = models.ForeignKey(Submission, related_name='open_text_answers')
+    task = models.ForeignKey(OpenTextTask, related_name='open_text_answers')
+    answer = models.TextField()
+
+
+class BudgetingTargetAnswer(models.Model):
+    """
+    Answer on BudgetingTarget. We set references to both task and target, in order to
+    uniquely connect budgeting answer with related task
+    """
+
+    submission = models.ForeignKey(Submission, related_name='budgeting_answers')
+    task = models.ForeignKey(BudgetingTask, related_name='budgeting_answers')
+    target = models.ForeignKey(BudgetingTarget, related_name='budgeting_answers')
+    amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    point = PointField(null=True, blank=True)
