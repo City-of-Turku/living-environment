@@ -1,0 +1,5 @@
+{% extends 'leaflet/widget.html' %}
+
+{% block callback %}
+    L.tileLayer.wms('https://opaskartta.turku.fi/TeklaOGCWeb/WMS.ashx', { layers: 'Opaskartta' }).addTo(map);
+{% endblock %}
