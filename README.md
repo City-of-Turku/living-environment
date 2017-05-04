@@ -39,6 +39,16 @@ Allow user to create test database
 * Run `npm run build`
 * Run `python manage.py runserver 0:8000`
 
+## Production
+
+### Environments
+
+Uses django-environ for configurations, create .env-file in your project dir to override settings.
+
+Environment variable | Type | Description
+--- | --- | ---
+CORS_ORIGIN_WHITELIST | list | A list of origin hostnames that are authorized to make cross-site HTTP requests.
+
 ## Running tests
 
 * Set the `DEBUG` environment variable to `1`.
