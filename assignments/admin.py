@@ -39,7 +39,7 @@ class SectionInline(NestedStackedInline):
     model = Section
 
 
-class SchoolInline(NestedTabularInline):
+class SchoolInline(NestedStackedInline):
     extra = 1
     model = School
 
