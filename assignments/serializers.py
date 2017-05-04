@@ -62,7 +62,7 @@ class AssignmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Assignment
-        fields = ['id', 'name', 'budget', 'slug', 'status', 'area', 'sections', 'schools']
+        fields = ['id', 'name', 'header', 'description', 'budget', 'slug', 'status', 'area', 'sections', 'schools']
 
 
 class OpenTextAnswerSerializer(serializers.ModelSerializer):
