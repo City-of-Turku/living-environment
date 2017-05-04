@@ -1,9 +1,8 @@
 import os
 
-from django.utils.translation import ugettext_lazy as _
-
 import environ
 import raven
+from django.utils.translation import ugettext_lazy as _
 
 checkout_dir = environ.Path(__file__) - 2
 assert os.path.exists(checkout_dir('manage.py'))
@@ -27,6 +26,8 @@ env = environ.Env(
     EMAIL_URL=(str, 'consolemail://'),
     SENTRY_DSN=(str, ''),
     CORS_ORIGIN_WHITELIST=(list, []),
+    FEEDBACK_SYSTEM_URL=(str, ''),
+    FEEDBACK_SERVICE_CODE=(str, ''),
 )
 if os.path.exists(env_file):
     env.read_env(env_file)
@@ -139,3 +140,7 @@ TEMPLATES = [
 # CORS
 CORS_ORIGIN_ALLOW_ALL = DEBUG
 CORS_ORIGIN_WHITELIST = env.list('CORS_ORIGIN_WHITELIST')
+
+# VOLUNTARY TASKS
+FEEDBACK_SYSTEM_URL = env.str('FEEDBACK_SYSTEM_URL')
+FEEDBACK_SERVICE_CODE = env.str('FEEDBACK_SERVICE_CODE')

@@ -1,5 +1,6 @@
 import json
 from collections import defaultdict
+from unittest.mock import patch
 
 import pytest
 from django.shortcuts import reverse
@@ -221,3 +222,22 @@ class TestApi:
                 for answer_data in budgeting_task['answers']:
                     report_answers_ids.append(answer_data['target']['id'])
         assert list(budgeting_answers_ids).sort() == report_answers_ids.sort()
+
+    @pytest.mark.django_db
+    def test_voluntary_signup_service_called_with_correct_post_data(self, voluntary_signup_data):
+        api_client = APIClient()
+        signup_url = reverse('assignments:signup-list')
+        with patch('assignments.serializers.urllib.request.urlopen') as urlopen_mock:
+            api_client.post(signup_url, data=json.dumps(voluntary_signup_data),
+                                       content_type='application/json')
+        assert urlopen_mock.called
+
+    @pytest.mark.django_db
+    def test_voluntary_signup_validation_failed_with_incorrect_post_data(self, voluntary_signup_data):
+        voluntary_signup_data.pop('lat')
+        api_client = APIClient()
+        signup_url = reverse('assignments:signup-list')
+        with patch('assignments.serializers.urllib.request.urlopen') as urlopen_mock:
+            response = api_client.post(signup_url, data=json.dumps(voluntary_signup_data),
+                                       content_type='application/json')
+        assert response.status_code == status.HTTP_400_BAD_REQUEST

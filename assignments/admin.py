@@ -3,7 +3,9 @@ from django.utils.translation import ugettext as _
 from leaflet.admin import LeafletGeoAdmin
 from nested_admin.nested import NestedModelAdminMixin, NestedStackedInline
 
-from assignments.models import Assignment, BudgetingTarget, BudgetingTask, OpenTextTask, School, SchoolClass, Section
+from assignments.models import (
+    Assignment, BudgetingTarget, BudgetingTask, OpenTextTask, School, SchoolClass, Section, VoluntarySignupTask
+)
 
 
 class OpenTextInline(NestedStackedInline):
@@ -28,13 +30,18 @@ class BudgetingTaskInline(NestedStackedInline):
     model = BudgetingTask
 
 
+class VoluntarySignupTaskInline(NestedStackedInline):
+    extra = 0
+    model = VoluntarySignupTask
+
+
 class SectionInline(NestedStackedInline):
     class Media:
         js = ("admin/ckeditor-nested-inline-fix.js",)
 
     extra = 1
     inlines = [
-        OpenTextInline, BudgetingTaskInline
+        OpenTextInline, BudgetingTaskInline, VoluntarySignupTaskInline
     ]
     model = Section
 
