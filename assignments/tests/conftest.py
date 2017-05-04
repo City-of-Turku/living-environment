@@ -16,9 +16,11 @@ def create_assignments():
     section_2 = SectionFactory(assignment=assignment_1)
     SectionFactory(assignment=assignment_2)
     OpenTextTaskFactory(section=section_1)
+    OpenTextTaskFactory(section=section_1)
     first_target = BudgetingTargetFactory()
     sec_target = BudgetingTargetFactory()
     BudgetingTaskFactory(section=section_2, targets=(first_target, sec_target))
+    BudgetingTaskFactory(section=section_1, targets=(first_target, sec_target))
 
 
 @pytest.fixture
