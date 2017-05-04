@@ -79,3 +79,16 @@ def answers():
     budgeting_task = BudgetingTaskFactory(section=section_2, targets=(budgeting_target_1, budgeting_target_2))
     BudgetingTargetAnswerFactory(task=budgeting_task, target=budgeting_target_1, submission=submission)
     BudgetingTargetAnswerFactory(task=budgeting_task, target=budgeting_target_2, submission=submission)
+
+
+@pytest.fixture
+def voluntary_signup_data():
+    return {
+        "first_name": "first",
+        "last_name": "sec",
+        "email": "s@fdasd.com",
+        "phone": "43423",
+        "description": "school/class",
+        "lat": 60.192059,
+        "long": 24.945831
+    }

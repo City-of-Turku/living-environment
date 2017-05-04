@@ -45,8 +45,10 @@ Allow user to create test database
 
 Uses django-environ for configurations, create .env-file in your project dir to override settings.
 
+
 Environment variable | Type | Description
---- | --- | ---
+FEEDBACK_SYSTEM_URL | str | url of feedback system used for student signup for voluntary tasks
+FEEDBACK_SERVICE_CODE | str | service code used for voluntary tasks. Code can be found using same url as for feedback system but with requests.json replaced with services.json
 CORS_ORIGIN_WHITELIST | list | A list of origin hostnames that are authorized to make cross-site HTTP requests.
 
 ## Running tests

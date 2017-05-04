@@ -1,8 +1,7 @@
+from ckeditor_uploader.fields import RichTextUploadingField
 from django.db import models
 from django.shortcuts import reverse
 from django.utils.translation import ugettext_lazy as _
-
-from ckeditor_uploader.fields import RichTextUploadingField
 from djgeojson.fields import GeometryField, PointField
 
 
@@ -210,3 +209,17 @@ class BudgetingTargetAnswer(models.Model):
     target = models.ForeignKey(BudgetingTarget, related_name='budgeting_answers')
     amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     point = PointField(null=True, blank=True)
+
+
+class VoluntarySignupTask(BaseTask):
+    """
+    Task defines voluntary actions participant can submit to.
+    """
+    name = models.CharField(_('name'), max_length=255)
+
+    class Meta:
+        verbose_name = _('voluntary signup task')
+        verbose_name_plural = _('voluntary signup tasks')
+
+    def __str__(self):
+        return self.name

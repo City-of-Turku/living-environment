@@ -1,9 +1,15 @@
+import urllib.error
+import urllib.parse
+import urllib.request
+
+from django.conf import settings
 from django.db.models import Count
 from rest_framework import serializers
 
+from assignments.exceptions import FeedbackSystemException
 from assignments.models import (
     Assignment, BudgetingTarget, BudgetingTargetAnswer, BudgetingTask, OpenTextAnswer, OpenTextTask, School,
-    SchoolClass, Section, Submission
+    SchoolClass, Section, Submission, VoluntarySignupTask
 )
 
 
@@ -17,7 +23,8 @@ class BudgetingTargetSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BudgetingTarget
-        fields = ['id', 'name', 'unit_price', 'reference_amount', 'min_amount', 'max_amount', 'icon']
+        fields = ['id', 'name', 'unit_price', 'reference_amount',
+                  'min_amount', 'max_amount', 'icon']
 
 
 class BudgetingTaskSerializer(serializers.ModelSerializer):
@@ -33,13 +40,22 @@ class BudgetingTaskSerializer(serializers.ModelSerializer):
         return obj.get_unit_display()
 
 
+class VoluntarySignupTaskSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = VoluntarySignupTask
+        fields = ['id', 'name']
+
+
 class SectionSerializer(serializers.ModelSerializer):
     open_text_tasks = OpenTextTaskSerializer(many=True, source='opentexttasks')
     budgeting_tasks = BudgetingTaskSerializer(many=True, source='budgetingtasks')
+    voluntary_signup_tasks = VoluntarySignupTaskSerializer(many=True, source='voluntarysignuptasks')
 
     class Meta:
         model = Section
-        fields = ['id', 'title', 'description', 'video', 'open_text_tasks', 'budgeting_tasks']
+        fields = ['id', 'title', 'description',
+                  'video', 'open_text_tasks',
+                  'budgeting_tasks', 'voluntary_signup_tasks']
 
 
 class SchoolClassSerializer(serializers.ModelSerializer):
@@ -62,7 +78,9 @@ class AssignmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Assignment
-        fields = ['id', 'name', 'header', 'description', 'budget', 'slug', 'status', 'area', 'sections', 'schools']
+        fields = ['id', 'name', 'header', 'description',
+                  'budget', 'slug', 'status',
+                  'area', 'sections', 'schools']
 
 
 class OpenTextAnswerSerializer(serializers.ModelSerializer):
@@ -179,3 +197,27 @@ class ReportAssignmentSerializer(serializers.ModelSerializer):
             'per_school': submissions_per_school,
             'per_class': submissions_per_class
         }
+
+
+class VoluntarySignupSerializer(serializers.Serializer):
+    first_name = serializers.CharField(max_length=255)
+    last_name = serializers.CharField(max_length=255)
+    email = serializers.EmailField(allow_blank=True)
+    phone = serializers.CharField(max_length=255, allow_blank=True)
+    description = serializers.CharField(max_length=512)
+    lat = serializers.DecimalField(max_digits=None, decimal_places=None, min_value=-90, max_value=90)
+    long = serializers.DecimalField(max_digits=None, decimal_places=None, min_value=-180, max_value=180)
+
+    def to_internal_value(self, data):
+        validated_data = super(VoluntarySignupSerializer, self).to_internal_value(data)
+        validated_data['service_code'] = settings.FEEDBACK_SERVICE_CODE
+        return validated_data
+
+    def save(self):
+        data = urllib.parse.urlencode(self.validated_data)
+        data = data.encode('utf-8')
+        req = urllib.request.Request(settings.FEEDBACK_SYSTEM_URL, data)
+        try:
+            urllib.request.urlopen(req)
+        except urllib.error.URLError:
+            raise FeedbackSystemException()
