@@ -50,6 +50,7 @@ Environment variable | Type | Description
 FEEDBACK_SYSTEM_URL | str | url of feedback system used for student signup for voluntary tasks
 FEEDBACK_SERVICE_CODE | str | service code used for voluntary tasks. Code can be found using same url as for feedback system but with requests.json replaced with services.json
 CORS_ORIGIN_WHITELIST | list | A list of origin hostnames that are authorized to make cross-site HTTP requests.
+FRONTEND_APP_URL | str | absolute site url used as a link from admin page
 
 ## Running tests
 

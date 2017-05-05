@@ -6,7 +6,7 @@ from leaflet.admin import LeafletGeoAdmin
 from polymorphic.admin import PolymorphicInlineSupportMixin, StackedPolymorphicInline
 
 from assignments.models import (
-    Assignment, BudgetingTarget, BudgetingTask, OpenTextTask, School, SchoolClass, Section, Task, VoluntarySignupTask
+    Assignment, BudgetingTarget, BudgetingTask, OpenTextTask, Section, Task, VoluntarySignupTask
 )
 
 
@@ -130,8 +130,3 @@ class AssignmentAdmin(LeafletGeoAdmin):
         else:
             inline_instances = orig_inline_instances
         return inline_instances
-
-
-admin.site.register(School)
-admin.site.register(SchoolClass)
-admin.site.register(Section, SectionAdmin)
