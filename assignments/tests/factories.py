@@ -14,6 +14,14 @@ class AssignmentFactory(factory.DjangoModelFactory):
     budget = factory.fuzzy.FuzzyDecimal(10000, 30000, precision=2)
     slug = factory.LazyAttribute(lambda n: slugify(n.name))
 
+    @factory.post_generation
+    def schools(self, create, extracted, **kwargs):
+        if not create:
+            return
+        if extracted:
+            for school in extracted:
+                self.schools.add(school)
+
 
 class SectionFactory(factory.DjangoModelFactory):
     class Meta:
@@ -68,7 +76,6 @@ class SchoolFactory(factory.DjangoModelFactory):
         model = models.School
 
     name = factory.Sequence(lambda n: 'school_%s' % n)
-    assignment = factory.SubFactory(AssignmentFactory)
 
     @factory.post_generation
     def classes(self, create, extracted, **kwargs):

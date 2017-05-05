@@ -53,11 +53,6 @@ class SectionAdmin(PolymorphicInlineSupportMixin, admin.ModelAdmin):
     inlines = (TaskInline,)
 
 
-class SchoolInline(admin.StackedInline):
-    extra = 1
-    model = School
-
-
 class SectionInline(admin.TabularInline):
     """
     Inline sections for assignment record. We are trying here to simulate change_list page with editable order_number.
@@ -100,7 +95,6 @@ class AssignmentAdmin(LeafletGeoAdmin):
     }
     inlines = (
         SectionInline,
-        SchoolInline,
     )
 
     class Media:
@@ -138,9 +132,6 @@ class AssignmentAdmin(LeafletGeoAdmin):
         return inline_instances
 
 
-@admin.register(SchoolClass)
-class SchoolClassAdmin(admin.ModelAdmin):
-    fields = ['name']
-
-
+admin.site.register(School)
+admin.site.register(SchoolClass)
 admin.site.register(Section, SectionAdmin)
