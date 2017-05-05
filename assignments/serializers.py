@@ -1,3 +1,4 @@
+import sys
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -9,8 +10,10 @@ from rest_framework import serializers
 from assignments.exceptions import FeedbackSystemException
 from assignments.models import (
     Assignment, BudgetingTarget, BudgetingTargetAnswer, BudgetingTask, OpenTextAnswer, OpenTextTask, School,
-    SchoolClass, Section, Submission, VoluntarySignupTask
+    SchoolClass, Section, Submission, Task, VoluntarySignupTask
 )
+
+SERIALIZERS_MODULE = sys.modules[__name__]
 
 
 class OpenTextTaskSerializer(serializers.ModelSerializer):
@@ -46,16 +49,33 @@ class VoluntarySignupTaskSerializer(serializers.ModelSerializer):
         fields = ['id', 'name']
 
 
+class TaskSerializer(serializers.ModelSerializer):
+    data = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Task
+        fields = ['id', 'order_number', 'task_type', 'data']
+
+    def get_data(self, obj):
+        """
+        Serialized data depend on Task type.
+        Serializer classes should be named as '<model name>Serializer'. If Serializer class is missing,
+        return empty data
+        """
+        try:
+            serializer_type = getattr(SERIALIZERS_MODULE, '{}Serializer'.format(obj.__class__.__name__))
+        except AttributeError:
+            return ''
+        serializer = serializer_type(obj)
+        return serializer.data
+
+
 class SectionSerializer(serializers.ModelSerializer):
-    open_text_tasks = OpenTextTaskSerializer(many=True, source='opentexttasks')
-    budgeting_tasks = BudgetingTaskSerializer(many=True, source='budgetingtasks')
-    voluntary_signup_tasks = VoluntarySignupTaskSerializer(many=True, source='voluntarysignuptasks')
+    tasks = TaskSerializer(many=True)
 
     class Meta:
         model = Section
-        fields = ['id', 'title', 'description',
-                  'video', 'open_text_tasks',
-                  'budgeting_tasks', 'voluntary_signup_tasks']
+        fields = ['id', 'title', 'description', 'video', 'tasks']
 
 
 class SchoolClassSerializer(serializers.ModelSerializer):
@@ -156,7 +176,7 @@ class ReportBudgetingTargetSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BudgetingTargetAnswer
-        fields = ['amount', 'point', 'target']
+        fields = ['id', 'amount', 'point', 'target']
 
 
 class ReportBudgetingTaskSerializer(serializers.ModelSerializer):
@@ -173,12 +193,22 @@ class ReportBudgetingTaskSerializer(serializers.ModelSerializer):
 
 
 class ReportSectionSerializer(serializers.ModelSerializer):
-    open_text_tasks = ReportOpenTextTaskSerializer(many=True, source='opentexttasks')
-    budgeting_tasks = ReportBudgetingTaskSerializer(many=True, source='budgetingtasks')
+    open_text_tasks = serializers.SerializerMethodField()
+    budgeting_tasks = serializers.SerializerMethodField()
 
     class Meta:
         model = Section
         fields = ['title', 'open_text_tasks', 'budgeting_tasks']
+
+    def get_open_text_tasks(self, obj):
+        open_text_tasks = obj.tasks.instance_of(OpenTextTask)
+        serializer = ReportOpenTextTaskSerializer(open_text_tasks, many=True, context=self.context)
+        return serializer.data
+
+    def get_budgeting_tasks(self, obj):
+        budgeting_tasks = obj.tasks.instance_of(BudgetingTask)
+        serializer = ReportBudgetingTaskSerializer(budgeting_tasks, many=True, context=self.context)
+        return serializer.data
 
 
 class ReportAssignmentSerializer(serializers.ModelSerializer):

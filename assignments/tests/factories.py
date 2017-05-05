@@ -1,7 +1,6 @@
 import factory
 import factory.fuzzy
 from django.utils.text import slugify
-from psycopg2.extras import NumericRange
 
 from assignments import models
 
@@ -24,7 +23,7 @@ class SectionFactory(factory.DjangoModelFactory):
     description = factory.fuzzy.FuzzyText(length=50)
     assignment = factory.SubFactory(AssignmentFactory)
     video = 'http://testvideo.com'
-    order_number = factory.Sequence(lambda n: n)
+    order_number = factory.fuzzy.FuzzyInteger(0, 100)
 
 
 class OpenTextTaskFactory(factory.DjangoModelFactory):
@@ -33,6 +32,7 @@ class OpenTextTaskFactory(factory.DjangoModelFactory):
 
     question = factory.fuzzy.FuzzyText()
     section = factory.SubFactory(SectionFactory)
+    order_number = factory.fuzzy.FuzzyInteger(0, 100)
 
 
 class BudgetingTargetFactory(factory.DjangoModelFactory):
@@ -52,6 +52,7 @@ class BudgetingTaskFactory(factory.DjangoModelFactory):
     name = factory.Sequence(lambda n: 'budgetingtask_%s' % n)
     amount_of_consumption = factory.fuzzy.FuzzyDecimal(2, 100, precision=2)
     unit = factory.Iterator([models.BudgetingTask.UNIT_HA, models.BudgetingTask.UNIT_PCS])
+    order_number = factory.fuzzy.FuzzyInteger(0, 100)
 
     @factory.post_generation
     def targets(self, create, extracted, **kwargs):

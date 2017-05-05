@@ -3,6 +3,7 @@ from django.db import models
 from django.shortcuts import reverse
 from django.utils.translation import ugettext_lazy as _
 from djgeojson.fields import GeometryField, PointField
+from polymorphic.models import PolymorphicModel
 
 
 class Assignment(models.Model):
@@ -53,7 +54,7 @@ class Section(models.Model):
     """
     Section is a part of assignment with tasks related to it.
     """
-    title = models.CharField(_('title'), max_length=256)
+    title = models.CharField(_('title'), max_length=255)
     description = RichTextUploadingField(_('description'), blank=True)
     assignment = models.ForeignKey(Assignment, related_name='sections', verbose_name=_('Assignment'))
     video = models.URLField(null=True, blank=True)
@@ -72,17 +73,25 @@ class Section(models.Model):
         return reverse('assignments:section-detail', args=[self.assignment.slug, self.pk])
 
 
-class BaseTask(models.Model):
+class Task(PolymorphicModel):
     """
-    Abstract model for all tasks.
+    Parent model for all task types.
     """
-    section = models.ForeignKey(Section, related_name='%(class)ss')
+    section = models.ForeignKey(Section, related_name='tasks', on_delete=models.CASCADE)
+    order_number = models.IntegerField(_('order number'), default=0, help_text=_('Order in which tasks are shown'))
 
     class Meta:
-        abstract = True
+        ordering = ['order_number']
+        # Fix delete.
+        # Workaround for https://github.com/django-polymorphic/django-polymorphic/issues/229#issuecomment-246613138
+        base_manager_name = 'base_objects'
+
+    @property
+    def task_type(self):
+        return 'basic_task'
 
 
-class OpenTextTask(BaseTask):
+class OpenTextTask(Task):
     """
     Simple question task where the answer is placed in text area
     """
@@ -103,6 +112,13 @@ class OpenTextTask(BaseTask):
             answers = answers.filter(submission__school_class__name=school_class)
         return answers
 
+    @property
+    def task_type(self):
+        return 'open_text_task'
+
+    def __str__(self):
+        return self.question[:80]
+
 
 class BudgetingTarget(models.Model):
     """
@@ -110,7 +126,7 @@ class BudgetingTarget(models.Model):
     on this target. Min and max amount should be defined for targets with value in a certain range.
     """
 
-    name = models.CharField(_('name'), max_length=256)
+    name = models.CharField(_('name'), max_length=255)
     unit_price = models.DecimalField(_('price'), max_digits=10, decimal_places=2, default=0)
     reference_amount = models.DecimalField(_('reference amount'), max_digits=10, decimal_places=2, default=0)
     min_amount = models.DecimalField(_('min amount'), max_digits=10, decimal_places=2, default=0)
@@ -125,7 +141,7 @@ class BudgetingTarget(models.Model):
         return self.name
 
 
-class BudgetingTask(BaseTask):
+class BudgetingTask(Task):
     """
     Budget tasks are related to section and consists of one or more Budgeting targets
     """
@@ -135,8 +151,7 @@ class BudgetingTask(BaseTask):
         (UNIT_HA, _('ha')),
         (UNIT_PCS, _('pcs'))
     )
-
-    name = models.CharField(_('name'), max_length=256)
+    name = models.CharField(_('name'), max_length=255)
     unit = models.IntegerField(_('unit'), choices=UNIT_CHOICES, default=UNIT_HA)
     amount_of_consumption = models.DecimalField(_('amount of consumption'), max_digits=10, decimal_places=2,
                                                 help_text=_('Number of units required to be spent on the task'),
@@ -146,9 +161,6 @@ class BudgetingTask(BaseTask):
     class Meta:
         verbose_name = _('budgeting task')
         verbose_name_plural = _('budgeting tasks')
-
-    def __str__(self):
-        return self.name
 
     def get_answers(self, school=None, school_class=None):
         """
@@ -160,6 +172,13 @@ class BudgetingTask(BaseTask):
         if school_class:
             answers = answers.filter(submission__school_class__name=school_class)
         return answers
+
+    @property
+    def task_type(self):
+        return 'budgeting_task'
+
+    def __str__(self):
+        return self.name
 
 
 class SchoolClass(models.Model):
@@ -214,7 +233,7 @@ class BudgetingTargetAnswer(models.Model):
     point = PointField(null=True, blank=True)
 
 
-class VoluntarySignupTask(BaseTask):
+class VoluntarySignupTask(Task):
     """
     Task defines voluntary actions participant can submit to.
     """
@@ -223,6 +242,10 @@ class VoluntarySignupTask(BaseTask):
     class Meta:
         verbose_name = _('voluntary signup task')
         verbose_name_plural = _('voluntary signup tasks')
+
+    @property
+    def task_type(self):
+        return 'voluntary_signup_task'
 
     def __str__(self):
         return self.name

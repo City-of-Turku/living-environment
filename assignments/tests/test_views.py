@@ -4,11 +4,12 @@ from unittest.mock import patch
 
 import pytest
 from django.shortcuts import reverse
+from django.test import override_settings
 from rest_framework import status
 from rest_framework.test import APIClient
 
 from assignments.models import (
-    Assignment, BudgetingTarget, BudgetingTargetAnswer, BudgetingTask, OpenTextAnswer, OpenTextTask, Submission
+    Assignment, BudgetingTarget, BudgetingTargetAnswer, BudgetingTask, OpenTextAnswer, OpenTextTask, Submission, Task
 )
 
 
@@ -35,6 +36,39 @@ class TestApi:
         assert list(section_ids).sort() == sections_response_ids.sort()
 
     @pytest.mark.django_db
+    def test_all_tasks_present_in_section_for_open_assignment(self, create_assignments):
+        assignment = Assignment.objects.get(status=Assignment.STATUS_OPEN)
+        api_client = APIClient()
+        sections = assignment.sections.all()
+        ids_per_section_db = []
+        for section in sections:
+            tasks_ids = Task.objects.filter(section=section).values_list('id', flat=True)
+            ids_per_section_db.append((section.id, list(tasks_ids)))
+        response = api_client.get(reverse('assignments:assignment-detail', args=[assignment.slug]))
+        response_data = response.json()
+        ids_per_section_response = []
+        for section in response_data['sections']:
+            tasks_response_ids = []
+            for task in section['tasks']:
+                tasks_response_ids.append(task['id'])
+            ids_per_section_response.append((section['id'], tasks_response_ids))
+        assert ids_per_section_db == ids_per_section_response
+
+    @pytest.mark.django_db
+    def test_all_sections_sorted_by_order_number(self, create_assignments):
+        assignment = Assignment.objects.get(status=Assignment.STATUS_OPEN)
+        sections_order_no = assignment.sections.values_list('order_number', flat=True)
+        assert sorted(list(sections_order_no)) == list(sections_order_no)
+
+    @pytest.mark.django_db
+    def test_all_tasks_sorted_by_order_number_in_sections(self, create_assignments):
+        assignment = Assignment.objects.get(status=Assignment.STATUS_OPEN)
+        sections = assignment.sections.all()
+        for section in sections:
+            tasks_order_no = Task.objects.filter(section=section).values_list('order_number', flat=True)
+            assert sorted(list(tasks_order_no)) == list(tasks_order_no)
+
+    @pytest.mark.django_db
     def test_all_open_text_tasks_present_in_section_for_open_assignment(self, create_assignments):
         assignment = Assignment.objects.get(status=Assignment.STATUS_OPEN)
         api_client = APIClient()
@@ -43,9 +77,10 @@ class TestApi:
         response_data = response.json()
         open_text_tasks_response_ids = []
         for section in response_data['sections']:
-            for open_text_task in section['open_text_tasks']:
-                open_text_tasks_response_ids.append(open_text_task['id'])
-        assert list(open_text_tasks_ids).sort() == open_text_tasks_response_ids.sort()
+            for task in section['tasks']:
+                if task['task_type'] == 'open_text_task':
+                    open_text_tasks_response_ids.append(task['id'])
+        assert sorted(list(open_text_tasks_ids)) == sorted(open_text_tasks_response_ids)
 
     @pytest.mark.django_db
     def test_all_budget_tasks_present_in_section_for_open_assignment(self, create_assignments):
@@ -56,34 +91,37 @@ class TestApi:
         response_data = response.json()
         budgeting_tasks_response_ids = []
         for section in response_data['sections']:
-            for budgeting_text_task in section['budgeting_tasks']:
-                budgeting_tasks_response_ids.append(budgeting_text_task['id'])
-        assert list(budget_tasks_ids).sort() == budgeting_tasks_response_ids.sort()
+            for task in section['tasks']:
+                if task['task_type'] == 'budgeting_task':
+                    budgeting_tasks_response_ids.append(task['id'])
+        assert sorted(list(budget_tasks_ids)) == sorted(budgeting_tasks_response_ids)
 
     @pytest.mark.django_db
     def test_all_budget_targets_present_in_budget_tasks_for_open_assignment(self, create_assignments,
                                                                             assignments_url):
         assignment = Assignment.objects.get(status=Assignment.STATUS_OPEN)
         api_client = APIClient()
-        budgeting_targets_ids = BudgetingTarget.objects.filter(budgeting_tasks__section__assignment=assignment
-                                                           ).values_list('id', flat=True)
+        budgeting_targets_ids = BudgetingTarget.objects.filter(
+            budgeting_tasks__section__assignment=assignment).values_list('id', flat=True)
         response = api_client.get(reverse('assignments:assignment-detail', args=[assignment.slug]))
         response_data = response.json()
         budgeting_targets_response_ids = []
         for section in response_data['sections']:
-            for budgeting_task in section['budgeting_tasks']:
-                budgeting_targets_response_ids.append([target['id'] for target in budgeting_task['targets']])
-        assert list(budgeting_targets_ids).sort() == budgeting_targets_response_ids.sort()
+            for task in section['tasks']:
+                if task['task_type'] == 'budgeting_task':
+                    budgeting_targets_response_ids.extend([target['id'] for target in task['data']['targets']])
+        assert sorted(list(budgeting_targets_ids)) == sorted(budgeting_targets_response_ids)
 
     @pytest.mark.django_db
     def test_open_text_answers_school_data_saved_successfully(self, answers_submit_data):
         api_client = APIClient()
         assignment = Assignment.objects.get()
         answers_url = reverse('assignments:answers', args=[assignment.slug])
-        response = api_client.post(answers_url, json.dumps(answers_submit_data), content_type='application/json')
+        api_client.post(answers_url, json.dumps(answers_submit_data), content_type='application/json')
         open_text_answers = OpenTextAnswer.objects.all()
-        open_text_school_no = open_text_answers.filter(submission__school=answers_submit_data['school'],
-                                                       submission__school_class=answers_submit_data['school_class']).count()
+        open_text_school_no = open_text_answers.filter(
+            submission__school=answers_submit_data['school'],
+            submission__school_class=answers_submit_data['school_class']).count()
         assert len(open_text_answers) == open_text_school_no
 
     @pytest.mark.django_db
@@ -91,10 +129,11 @@ class TestApi:
         api_client = APIClient()
         assignment = Assignment.objects.get()
         answers_url = reverse('assignments:answers', args=[assignment.slug])
-        response = api_client.post(answers_url, json.dumps(answers_submit_data), content_type='application/json')
+        api_client.post(answers_url, json.dumps(answers_submit_data), content_type='application/json')
         budgeting_answers = BudgetingTargetAnswer.objects.all()
-        budgeting_answers_school_no = budgeting_answers.filter(submission__school=answers_submit_data['school'],
-                                                       submission__school_class=answers_submit_data['school_class']).count()
+        budgeting_answers_school_no = budgeting_answers.filter(
+            submission__school=answers_submit_data['school'],
+            submission__school_class=answers_submit_data['school_class']).count()
         assert len(budgeting_answers) == budgeting_answers_school_no
 
     @pytest.mark.django_db
@@ -102,7 +141,7 @@ class TestApi:
         api_client = APIClient()
         assignment = Assignment.objects.get()
         answers_url = reverse('assignments:answers', args=[assignment.slug])
-        response = api_client.post(answers_url, json.dumps(answers_submit_data), content_type='application/json')
+        api_client.post(answers_url, json.dumps(answers_submit_data), content_type='application/json')
         for open_text_answer in answers_submit_data['open_text_tasks']:
             task = OpenTextTask.objects.filter(id=open_text_answer['task']).first()
             assert task is not None
@@ -113,7 +152,7 @@ class TestApi:
         api_client = APIClient()
         assignment = Assignment.objects.get()
         answers_url = reverse('assignments:answers', args=[assignment.slug])
-        response = api_client.post(answers_url, json.dumps(answers_submit_data), content_type='application/json')
+        api_client.post(answers_url, json.dumps(answers_submit_data), content_type='application/json')
         for budgeting_target in answers_submit_data['budgeting_targets']:
             task = BudgetingTask.objects.filter(id=budgeting_target['task']).first()
             target = BudgetingTarget.objects.filter(id=budgeting_target['target']).first()
@@ -204,7 +243,7 @@ class TestApi:
             for open_text_task_data in section_data['open_text_tasks']:
                 for answer_data in open_text_task_data['answers']:
                     report_answers_ids.append(answer_data['id'])
-        assert list(open_text_answers_ids).sort() == report_answers_ids.sort()
+        assert sorted(list(open_text_answers_ids)) == sorted(report_answers_ids)
 
     @pytest.mark.django_db
     def test_report_contains_all_budgeting_answers(self, answers):
@@ -220,16 +259,17 @@ class TestApi:
         for section_data in response_data['sections']:
             for budgeting_task in section_data['budgeting_tasks']:
                 for answer_data in budgeting_task['answers']:
-                    report_answers_ids.append(answer_data['target']['id'])
-        assert list(budgeting_answers_ids).sort() == report_answers_ids.sort()
+                    report_answers_ids.append(answer_data['id'])
+        assert sorted(list(budgeting_answers_ids)) == sorted(report_answers_ids)
 
     @pytest.mark.django_db
+    @override_settings(FEEDBACK_SYSTEM_URL='http://test-feedback/')
     def test_voluntary_signup_service_called_with_correct_post_data(self, voluntary_signup_data):
         api_client = APIClient()
         signup_url = reverse('assignments:signup-list')
         with patch('assignments.serializers.urllib.request.urlopen') as urlopen_mock:
             api_client.post(signup_url, data=json.dumps(voluntary_signup_data),
-                                       content_type='application/json')
+                            content_type='application/json')
         assert urlopen_mock.called
 
     @pytest.mark.django_db
@@ -237,7 +277,7 @@ class TestApi:
         voluntary_signup_data.pop('lat')
         api_client = APIClient()
         signup_url = reverse('assignments:signup-list')
-        with patch('assignments.serializers.urllib.request.urlopen') as urlopen_mock:
+        with patch('assignments.serializers.urllib.request.urlopen'):
             response = api_client.post(signup_url, data=json.dumps(voluntary_signup_data),
                                        content_type='application/json')
         assert response.status_code == status.HTTP_400_BAD_REQUEST

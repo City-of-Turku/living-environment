@@ -91,6 +91,7 @@ INSTALLED_APPS = [
     'nested_admin',
     'ckeditor',
     'ckeditor_uploader',
+    'polymorphic',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -124,7 +125,7 @@ if DEBUG:
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [checkout_dir('templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
