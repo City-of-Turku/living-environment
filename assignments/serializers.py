@@ -135,7 +135,7 @@ class SubmitAnswersSerializer(serializers.Serializer):
     budgeting_targets = BudgetingTargetAnswerSerializer(many=True)
 
     def validate_school(self, value):
-        if value.assignment.slug != self.context['assignment_slug']:
+        if not value.assignments.filter(slug=self.context['assignment_slug']).exists():
             raise serializers.ValidationError('You specified school on wrong assignment')
         return value
 

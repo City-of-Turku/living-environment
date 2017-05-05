@@ -30,10 +30,10 @@ def assignments_url():
 
 @pytest.fixture
 def answers_submit_data():
-    assignment = AssignmentFactory()
     class_1 = SchoolClassFactory()
     class_2 = SchoolClassFactory()
-    school = SchoolFactory(assignment=assignment, classes=(class_1, class_2))
+    school = SchoolFactory(classes=(class_1, class_2))
+    assignment = AssignmentFactory(schools=(school,))
     section = SectionFactory(assignment=assignment)
     open_text_task_1 = OpenTextTaskFactory(section=section)
     open_text_task_2 = OpenTextTaskFactory(section=section)
@@ -67,12 +67,12 @@ def answers_submit_data():
 
 @pytest.fixture
 def answers():
-    assignment = AssignmentFactory()
-    section = SectionFactory(assignment=assignment)
-    section_2 = SectionFactory(assignment=assignment)
     class_1 = SchoolClassFactory()
     class_2 = SchoolClassFactory()
-    school = SchoolFactory(assignment=assignment, classes=(class_1, class_2))
+    school = SchoolFactory(classes=(class_1, class_2))
+    assignment = AssignmentFactory(schools=(school,))
+    section = SectionFactory(assignment=assignment)
+    section_2 = SectionFactory(assignment=assignment)
     submission = SubmissionFactory(school=school)
     open_text_task = OpenTextTaskFactory(section=section)
     OpenTextAnswerFactory(submission=submission, task=open_text_task)
