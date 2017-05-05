@@ -24,6 +24,7 @@ class SectionFactory(factory.DjangoModelFactory):
     description = factory.fuzzy.FuzzyText(length=50)
     assignment = factory.SubFactory(AssignmentFactory)
     video = 'http://testvideo.com'
+    order_number = factory.Sequence(lambda n: n)
 
 
 class OpenTextTaskFactory(factory.DjangoModelFactory):
