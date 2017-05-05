@@ -2,22 +2,21 @@ sudo: false
 language: python
 services:
   - postgresql
-
 cache:
   directories:
     - "$HOME/.cache/pip"
 env:
-  - DEBUG=1
-  - DATABASE_URL=postgres://postgres:@localhost/living_environment
-
+  global:
+    - DEBUG=1
+    - DATABASE_URL=postgres://postgres:@localhost/living_environment
 python: 3.4
 install:
   - pip install -U pip
+  - pip install codecov
   - pip install -r requirements.txt -r requirements-dev.txt
 
 before_script:
   - psql -c 'create database living_environment;' -U postgres
-
 script:
   - flake8
   - py.test -ra -vvv --cov
