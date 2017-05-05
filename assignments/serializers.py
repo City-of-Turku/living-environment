@@ -33,14 +33,18 @@ class BudgetingTargetSerializer(serializers.ModelSerializer):
 class BudgetingTaskSerializer(serializers.ModelSerializer):
     targets = BudgetingTargetSerializer(many=True)
     unit = serializers.SerializerMethodField()
+    budgeting_type = serializers.SerializerMethodField()
 
     class Meta:
         model = BudgetingTask
-        fields = ['id', 'name', 'unit', 'targets', 'amount_of_consumption']
+        fields = ['id', 'name', 'unit', 'budgeting_type', 'targets', 'amount_of_consumption']
         read_only_fields = ('name', 'unit', 'amount_of_consumption')
 
     def get_unit(self, obj):
         return obj.get_unit_display()
+
+    def get_budgeting_type(self, obj):
+        return obj.get_budgeting_type_display()
 
 
 class VoluntarySignupTaskSerializer(serializers.ModelSerializer):

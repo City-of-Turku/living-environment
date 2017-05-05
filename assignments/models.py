@@ -152,12 +152,20 @@ class BudgetingTask(Task):
         (UNIT_HA, _('ha')),
         (UNIT_PCS, _('pcs'))
     )
+    TEXT_TYPE = 0
+    MAP_TYPE = 1
+    TYPE_CHOICES = (
+        (TEXT_TYPE, _('text')),
+        (MAP_TYPE, _('map'))
+    )
+
     name = models.CharField(_('name'), max_length=255)
     unit = models.IntegerField(_('unit'), choices=UNIT_CHOICES, default=UNIT_HA)
     amount_of_consumption = models.DecimalField(_('amount of consumption'), max_digits=10, decimal_places=2,
                                                 help_text=_('Number of units required to be spent on the task'),
                                                 default=0)
     targets = models.ManyToManyField(BudgetingTarget, related_name='budgeting_tasks', verbose_name=_('budget targets'))
+    budgeting_type = models.IntegerField(_('type'), choices=TYPE_CHOICES, default=TEXT_TYPE)
 
     class Meta:
         verbose_name = _('budgeting task')
