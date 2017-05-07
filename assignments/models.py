@@ -22,6 +22,8 @@ class Assignment(models.Model):
     name = models.CharField(_('name'), max_length=128, unique=True)
     header = models.CharField(_('header'), max_length=255, null=True)
     description = RichTextUploadingField(_('description'), blank=True)
+    image = models.ImageField(_('image'), upload_to='assignment/image/',
+                              blank=True, default='assignment/image/default.jpg')
     area = GeometryField(_('area'))
     status = models.IntegerField(_('status'), choices=STATUS_CHOICES, default=STATUS_OPEN)
     budget = models.DecimalField(_('budget'), max_digits=10, decimal_places=2, default=0)
@@ -132,7 +134,7 @@ class BudgetingTarget(models.Model):
     reference_amount = models.DecimalField(_('reference amount'), max_digits=10, decimal_places=2, default=0)
     min_amount = models.DecimalField(_('min amount'), max_digits=10, decimal_places=2, default=0)
     max_amount = models.DecimalField(_('max amount'), max_digits=10, decimal_places=2, null=True, blank=True)
-    icon = models.FileField(_('icon'), upload_to='target/icons/', blank=True, default='target/icons/default.png')
+    icon = models.ImageField(_('icon'), upload_to='target/icons/', blank=True, default='target/icons/default.png')
 
     class Meta:
         verbose_name = _('budget target')

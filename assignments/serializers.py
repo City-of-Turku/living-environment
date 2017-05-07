@@ -103,7 +103,7 @@ class AssignmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Assignment
         fields = ['id', 'name', 'header', 'description',
-                  'budget', 'slug', 'status',
+                  'budget', 'image', 'slug', 'status',
                   'area', 'sections', 'schools']
 
 

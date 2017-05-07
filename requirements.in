@@ -12,3 +12,4 @@ django-ckeditor~=5.2.2
 psycopg2
 raven~=6.0
 django-nested-admin
+pillow~=4.1.1

@@ -34,10 +34,12 @@ isort==4.2.5
 jedi==0.10.2
 jsonfield==2.0.1
 mccabe==0.6.1             # via flake8
+olefile==0.44
 packaging==16.8           # via setuptools
 pep8-naming==0.4.1
 pexpect==4.2.1            # via ipython
 pickleshare==0.7.4        # via ipython
+pillow==4.1.1
 pip-tools==1.8.2
 prompt-toolkit==1.0.14    # via ipython
 psycopg2==2.7.1
