@@ -28,6 +28,7 @@ env = environ.Env(
     CORS_ORIGIN_WHITELIST=(list, []),
     FEEDBACK_SYSTEM_URL=(str, ''),
     FEEDBACK_SERVICE_CODE=(str, ''),
+    FRONTEND_APP_URL=(str, ''),
 )
 if os.path.exists(env_file):
     env.read_env(env_file)
@@ -74,7 +75,7 @@ LEAFLET_CONFIG = {
 
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
+    'django.contrib.admin.apps.SimpleAdminConfig',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -145,3 +146,5 @@ CORS_ORIGIN_WHITELIST = env.list('CORS_ORIGIN_WHITELIST')
 # VOLUNTARY TASKS
 FEEDBACK_SYSTEM_URL = env.str('FEEDBACK_SYSTEM_URL')
 FEEDBACK_SERVICE_CODE = env.str('FEEDBACK_SERVICE_CODE')
+
+FRONTEND_APP_URL = env.str('FRONTEND_APP_URL').rstrip('/')

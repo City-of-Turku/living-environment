@@ -1,6 +1,6 @@
 from ckeditor_uploader.fields import RichTextUploadingField
+from django.conf import settings
 from django.db import models
-from django.shortcuts import reverse
 from django.utils.translation import ugettext_lazy as _
 from djgeojson.fields import GeometryField, PointField
 from polymorphic.models import PolymorphicModel
@@ -39,7 +39,7 @@ class Assignment(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('assignments:assignment-detail', args=[self.slug])
+        return '{}/{}/'.format(settings.FRONTEND_APP_URL, self.slug)
 
     def get_submissions(self, school=None, school_class=None):
         """
@@ -71,9 +71,6 @@ class Section(models.Model):
 
     def __str__(self):
         return self.title
-
-    def get_absolute_url(self):
-        return reverse('assignments:section-detail', args=[self.assignment.slug, self.pk])
 
 
 class Task(PolymorphicModel):
