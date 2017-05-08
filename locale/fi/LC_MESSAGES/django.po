@@ -1,0 +1,234 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-05-07 14:20+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: .\assignments\admin.py:19
+msgid "Amount range"
+msgstr "Arvon rajaus"
+
+#: .\assignments\admin.py:44
+msgid "task"
+msgstr "tehtävä"
+
+#: .\assignments\admin.py:45
+msgid "tasks"
+msgstr "tehtävät"
+
+#: .\assignments\admin.py:85 .\assignments\models.py:60
+msgid "title"
+msgstr "otsikko"
+
+#: .\assignments\apps.py:7 .\assignments\models.py:36
+msgid "Assignments"
+msgstr "Tehtävänannot"
+
+#: .\assignments\models.py:18
+msgid "Open"
+msgstr "Avoinna"
+
+#: .\assignments\models.py:19
+msgid "Closed"
+msgstr "Suljettu"
+
+#: .\assignments\models.py:22 .\assignments\models.py:132
+#: .\assignments\models.py:164 .\assignments\models.py:196
+#: .\assignments\models.py:207 .\assignments\models.py:250
+msgid "name"
+msgstr "nimi"
+
+#: .\assignments\models.py:23
+msgid "header"
+msgstr "otsikko"
+
+#: .\assignments\models.py:24 .\assignments\models.py:61
+msgid "description"
+msgstr "kuvaus"
+
+#: .\assignments\models.py:25
+msgid "image"
+msgstr "kuva"
+
+#: .\assignments\models.py:27
+msgid "area"
+msgstr "alue"
+
+#: .\assignments\models.py:28
+msgid "status"
+msgstr "tila"
+
+#: .\assignments\models.py:29
+msgid "budget"
+msgstr "budjetti"
+
+#: .\assignments\models.py:30 .\assignments\models.py:212
+msgid "schools"
+msgstr "koulut"
+
+#: .\assignments\models.py:32
+msgid "The user-friendly URL identifier ex. www.example.com/runosmaen-koulu"
+msgstr "Käyttäjäystävällinen URL-tunniste ex. www.malli.com/runosmaen-koulu"
+
+#: .\assignments\models.py:35 .\assignments\models.py:62
+msgid "Assignment"
+msgstr "Tehtävänanto"
+
+#: .\assignments\models.py:64 .\assignments\models.py:84
+msgid "order number"
+msgstr "järjestys"
+
+#: .\assignments\models.py:65
+msgid "Order in which sections are shown"
+msgstr "Järjestys, jossa tehtäväosat näytetään"
+
+#: .\assignments\models.py:68
+msgid "Section"
+msgstr "Tehtäväosio"
+
+#: .\assignments\models.py:69
+msgid "Sections"
+msgstr "Tehtävänosiot"
+
+#: .\assignments\models.py:84
+msgid "Order in which tasks are shown"
+msgstr "Järjestys, jossa tehtävät näytetään"
+
+#: .\assignments\models.py:101
+msgid "question"
+msgstr "kysymys"
+
+#: .\assignments\models.py:104
+msgid "open text task"
+msgstr "Tekstikysymys"
+
+#: .\assignments\models.py:105
+msgid "open text tasks"
+msgstr "Tekstikysymykset"
+
+#: .\assignments\models.py:133
+msgid "price"
+msgstr "hinta"
+
+#: .\assignments\models.py:134
+msgid "reference amount"
+msgstr "viitearvo"
+
+#: .\assignments\models.py:135
+msgid "min amount"
+msgstr "pienin arvo"
+
+#: .\assignments\models.py:136
+msgid "max amount"
+msgstr "suurin arvo"
+
+#: .\assignments\models.py:137
+msgid "icon"
+msgstr "ikoni"
+
+#: .\assignments\models.py:140
+msgid "budget target"
+msgstr "budjettikohde"
+
+#: .\assignments\models.py:141 .\assignments\models.py:169
+msgid "budget targets"
+msgstr "budjettikohteet"
+
+#: .\assignments\models.py:154
+msgid "ha"
+msgstr ""
+
+#: .\assignments\models.py:155
+msgid "pcs"
+msgstr "kpl"
+
+#: .\assignments\models.py:160
+msgid "text"
+msgstr "teksti"
+
+#: .\assignments\models.py:161
+msgid "map"
+msgstr "kartta"
+
+#: .\assignments\models.py:165
+msgid "unit"
+msgstr "yksikkö"
+
+#: .\assignments\models.py:166
+msgid "amount of consumption"
+msgstr "Kulutettava määrä"
+
+#: .\assignments\models.py:167
+msgid "Number of units required to be spent on the task"
+msgstr "Tehtävään tarvittavien yksiköiden lukumäärä"
+
+#: .\assignments\models.py:170
+msgid "type"
+msgstr "tyyppi"
+
+#: .\assignments\models.py:173
+msgid "budgeting task"
+msgstr "Budjetointitehtävä"
+
+#: .\assignments\models.py:174
+msgid "budgeting tasks"
+msgstr "Budjetointitehtävät"
+
+#: .\assignments\models.py:199
+msgid "class"
+msgstr "luokka"
+
+#: .\assignments\models.py:200 .\assignments\models.py:208
+msgid "classes"
+msgstr "luokat"
+
+#: .\assignments\models.py:211
+msgid "school"
+msgstr "koulu"
+
+#: .\assignments\models.py:253
+msgid "voluntary signup task"
+msgstr "Vapaaehtoinen rekisteröintitehtävä"
+
+#: .\assignments\models.py:254
+msgid "voluntary signup tasks"
+msgstr "Vapaaehtoinen rekisteröintitehtävät"
+
+#: .\assignments\templates\admin\assignments\assignment\sections.html:26
+msgid "Delete?"
+msgstr "Poista?"
+
+#: .\assignments\templates\admin\assignments\assignment\sections.html:46
+msgid "Change"
+msgstr "Muuta"
+
+#: .\assignments\templates\admin\assignments\assignment\sections.html:49
+msgid "View on site"
+msgstr "Näytä sivustolla"
+
+#: .\assignments\templates\admin\assignments\assignment\sections.html:94
+#, python-format
+msgid "Add %(name)s"
+msgstr "Lisää %(name)s"
+
+#: .\living_environment\settings.py:111
+msgid "Finnish"
+msgstr "Suomeksi"
+
+#: .\living_environment\settings.py:112
+msgid "English"
+msgstr "Englanniksi"

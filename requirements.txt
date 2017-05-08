@@ -12,10 +12,13 @@ django-extensions==1.7.8
 django-geojson==2.10.0
 django-leaflet==0.22.0
 django-nested-admin==3.0.17
+django-polymorphic==1.2
 django==1.11
 djangorestframework==3.6.2
 drf-extensions==0.3.1
 jsonfield==2.0.1
+olefile==0.44             # via pillow
+pillow==4.1.1
 psycopg2==2.7.1
 python-monkey-business==1.0.0  # via django-nested-admin
 pytz==2017.2              # via django

@@ -16,9 +16,11 @@ def create_assignments():
     section_2 = SectionFactory(assignment=assignment_1)
     SectionFactory(assignment=assignment_2)
     OpenTextTaskFactory(section=section_1)
+    OpenTextTaskFactory(section=section_1)
     first_target = BudgetingTargetFactory()
     sec_target = BudgetingTargetFactory()
     BudgetingTaskFactory(section=section_2, targets=(first_target, sec_target))
+    BudgetingTaskFactory(section=section_1, targets=(first_target, sec_target))
 
 
 @pytest.fixture
@@ -28,10 +30,10 @@ def assignments_url():
 
 @pytest.fixture
 def answers_submit_data():
-    assignment = AssignmentFactory()
     class_1 = SchoolClassFactory()
     class_2 = SchoolClassFactory()
-    school = SchoolFactory(assignment=assignment, classes=(class_1, class_2))
+    school = SchoolFactory(classes=(class_1, class_2))
+    assignment = AssignmentFactory(schools=(school,))
     section = SectionFactory(assignment=assignment)
     open_text_task_1 = OpenTextTaskFactory(section=section)
     open_text_task_2 = OpenTextTaskFactory(section=section)
@@ -65,12 +67,12 @@ def answers_submit_data():
 
 @pytest.fixture
 def answers():
-    assignment = AssignmentFactory()
-    section = SectionFactory(assignment=assignment)
-    section_2 = SectionFactory(assignment=assignment)
     class_1 = SchoolClassFactory()
     class_2 = SchoolClassFactory()
-    school = SchoolFactory(assignment=assignment, classes=(class_1, class_2))
+    school = SchoolFactory(classes=(class_1, class_2))
+    assignment = AssignmentFactory(schools=(school,))
+    section = SectionFactory(assignment=assignment)
+    section_2 = SectionFactory(assignment=assignment)
     submission = SubmissionFactory(school=school)
     open_text_task = OpenTextTaskFactory(section=section)
     OpenTextAnswerFactory(submission=submission, task=open_text_task)
@@ -79,3 +81,16 @@ def answers():
     budgeting_task = BudgetingTaskFactory(section=section_2, targets=(budgeting_target_1, budgeting_target_2))
     BudgetingTargetAnswerFactory(task=budgeting_task, target=budgeting_target_1, submission=submission)
     BudgetingTargetAnswerFactory(task=budgeting_task, target=budgeting_target_2, submission=submission)
+
+
+@pytest.fixture
+def voluntary_signup_data():
+    return {
+        "first_name": "first",
+        "last_name": "sec",
+        "email": "s@fdasd.com",
+        "phone": "43423",
+        "description": "school/class",
+        "lat": 60.192059,
+        "long": 24.945831
+    }

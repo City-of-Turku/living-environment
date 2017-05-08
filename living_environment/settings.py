@@ -2,6 +2,7 @@ import os
 
 import environ
 import raven
+from django.utils.translation import ugettext_lazy as _
 
 checkout_dir = environ.Path(__file__) - 2
 assert os.path.exists(checkout_dir('manage.py'))
@@ -25,6 +26,9 @@ env = environ.Env(
     EMAIL_URL=(str, 'consolemail://'),
     SENTRY_DSN=(str, ''),
     CORS_ORIGIN_WHITELIST=(list, []),
+    FEEDBACK_SYSTEM_URL=(str, ''),
+    FEEDBACK_SERVICE_CODE=(str, ''),
+    FRONTEND_APP_URL=(str, ''),
 )
 if os.path.exists(env_file):
     env.read_env(env_file)
@@ -65,13 +69,13 @@ CKEDITOR_UPLOAD_PATH = "uploads/"
 STATICFILES_DIRS = [checkout_dir('static')]
 LEAFLET_CONFIG = {
     'TILES': [],
-    'DEFAULT_CENTER': [60.4629060928519,22.259694757206415],
-    'DEFAULT_ZOOM': 16,
+    'DEFAULT_CENTER': [60.451389, 22.266667],
+    'DEFAULT_ZOOM': 12,
 }
 
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
+    'django.contrib.admin.apps.SimpleAdminConfig',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -88,11 +92,13 @@ INSTALLED_APPS = [
     'nested_admin',
     'ckeditor',
     'ckeditor_uploader',
+    'polymorphic',
 ]
 
 MIDDLEWARE_CLASSES = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -101,6 +107,15 @@ MIDDLEWARE_CLASSES = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
 ]
+
+LANGUAGES = [
+  ('fi', _('Finnish')),
+  ('en', _('English')),
+]
+
+LOCALE_PATHS = (
+    os.path.join(checkout_dir(), "locale"),
+)
 
 # Setup Django Debug Toolbar
 if DEBUG:
@@ -111,7 +126,7 @@ if DEBUG:
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [checkout_dir('templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -127,3 +142,9 @@ TEMPLATES = [
 # CORS
 CORS_ORIGIN_ALLOW_ALL = DEBUG
 CORS_ORIGIN_WHITELIST = env.list('CORS_ORIGIN_WHITELIST')
+
+# VOLUNTARY TASKS
+FEEDBACK_SYSTEM_URL = env.str('FEEDBACK_SYSTEM_URL')
+FEEDBACK_SERVICE_CODE = env.str('FEEDBACK_SERVICE_CODE')
+
+FRONTEND_APP_URL = env.str('FRONTEND_APP_URL').rstrip('/')

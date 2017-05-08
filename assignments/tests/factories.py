@@ -1,7 +1,6 @@
 import factory
 import factory.fuzzy
 from django.utils.text import slugify
-from psycopg2.extras import NumericRange
 
 from assignments import models
 
@@ -15,6 +14,14 @@ class AssignmentFactory(factory.DjangoModelFactory):
     budget = factory.fuzzy.FuzzyDecimal(10000, 30000, precision=2)
     slug = factory.LazyAttribute(lambda n: slugify(n.name))
 
+    @factory.post_generation
+    def schools(self, create, extracted, **kwargs):
+        if not create:
+            return
+        if extracted:
+            for school in extracted:
+                self.schools.add(school)
+
 
 class SectionFactory(factory.DjangoModelFactory):
     class Meta:
@@ -24,6 +31,7 @@ class SectionFactory(factory.DjangoModelFactory):
     description = factory.fuzzy.FuzzyText(length=50)
     assignment = factory.SubFactory(AssignmentFactory)
     video = 'http://testvideo.com'
+    order_number = factory.fuzzy.FuzzyInteger(0, 100)
 
 
 class OpenTextTaskFactory(factory.DjangoModelFactory):
@@ -32,6 +40,7 @@ class OpenTextTaskFactory(factory.DjangoModelFactory):
 
     question = factory.fuzzy.FuzzyText()
     section = factory.SubFactory(SectionFactory)
+    order_number = factory.fuzzy.FuzzyInteger(0, 100)
 
 
 class BudgetingTargetFactory(factory.DjangoModelFactory):
@@ -51,6 +60,7 @@ class BudgetingTaskFactory(factory.DjangoModelFactory):
     name = factory.Sequence(lambda n: 'budgetingtask_%s' % n)
     amount_of_consumption = factory.fuzzy.FuzzyDecimal(2, 100, precision=2)
     unit = factory.Iterator([models.BudgetingTask.UNIT_HA, models.BudgetingTask.UNIT_PCS])
+    order_number = factory.fuzzy.FuzzyInteger(0, 100)
 
     @factory.post_generation
     def targets(self, create, extracted, **kwargs):
@@ -66,7 +76,6 @@ class SchoolFactory(factory.DjangoModelFactory):
         model = models.School
 
     name = factory.Sequence(lambda n: 'school_%s' % n)
-    assignment = factory.SubFactory(AssignmentFactory)
 
     @factory.post_generation
     def classes(self, create, extracted, **kwargs):
