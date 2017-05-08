@@ -71,6 +71,15 @@ class BudgetingTaskFactory(factory.DjangoModelFactory):
                 self.targets.add(target)
 
 
+class VoluntaryTaskFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.VoluntarySignupTask
+
+    name = factory.fuzzy.FuzzyText()
+    section = factory.SubFactory(SectionFactory)
+    order_number = factory.fuzzy.FuzzyInteger(0, 100)
+
+
 class SchoolFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.School
