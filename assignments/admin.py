@@ -41,6 +41,8 @@ class TaskInline(StackedPolymorphicInline):
         BudgetingTaskInline,
         VoluntarySignupTaskInline,
     )
+    verbose_name = _('task')
+    verbose_name_plural = _('tasks')
 
 
 class SectionAdmin(PolymorphicInlineSupportMixin, admin.ModelAdmin):
@@ -80,7 +82,7 @@ class SectionInline(admin.TabularInline):
             current_app=self.admin_site.name,
         )
         return format_html('<a href="{}">{}</a>'.format(obj_url, obj.title))
-    edit_section.short_description = 'title'
+    edit_section.short_description = _('title')
 
 
 @admin.register(Assignment)

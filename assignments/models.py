@@ -27,7 +27,7 @@ class Assignment(models.Model):
     area = GeometryField(_('area'))
     status = models.IntegerField(_('status'), choices=STATUS_CHOICES, default=STATUS_OPEN)
     budget = models.DecimalField(_('budget'), max_digits=10, decimal_places=2, default=0)
-    schools = models.ManyToManyField('School', related_name='assignments')
+    schools = models.ManyToManyField('School', related_name='assignments', verbose_name=_('schools'))
     slug = models.SlugField(max_length=80, unique=True,
                             help_text=_('The user-friendly URL identifier ex. www.example.com/runosmaen-koulu'))
 
@@ -193,7 +193,7 @@ class BudgetingTask(Task):
 
 
 class SchoolClass(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(_('name'), max_length=255)
 
     class Meta:
         verbose_name = _('class')
@@ -204,8 +204,8 @@ class SchoolClass(models.Model):
 
 
 class School(models.Model):
-    name = models.CharField(max_length=255)
-    classes = models.ManyToManyField(SchoolClass, related_name='schools')
+    name = models.CharField(_('name'), max_length=255)
+    classes = models.ManyToManyField(SchoolClass, related_name='schools', verbose_name=_('classes'))
 
     class Meta:
         verbose_name = _('school')
