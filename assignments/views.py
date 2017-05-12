@@ -1,14 +1,12 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import status
-from rest_framework.mixins import CreateModelMixin
 from rest_framework.response import Response
-from rest_framework.viewsets import GenericViewSet, ReadOnlyModelViewSet, ViewSet
+from rest_framework.viewsets import ReadOnlyModelViewSet, ViewSet
 from rest_framework_extensions.mixins import NestedViewSetMixin
 
 from assignments.models import Assignment, Section
 from assignments.serializers import (
-    AssignmentSerializer, ReportAssignmentSerializer, SectionSerializer, SubmitAnswersSerializer,
-    VoluntarySignupSerializer
+    AssignmentSerializer, ReportAssignmentSerializer, SectionSerializer, SubmitAnswersSerializer
 )
 
 
@@ -57,7 +55,3 @@ class SubmitAnswersViewSet(ViewSet):
         assignment = get_object_or_404(Assignment, slug=kwargs['slug'])
         serializer = ReportAssignmentSerializer(assignment, context=self.get_report_context())
         return Response(serializer.data)
-
-
-class VoluntarySignupViewSet(CreateModelMixin, GenericViewSet):
-    serializer_class = VoluntarySignupSerializer
