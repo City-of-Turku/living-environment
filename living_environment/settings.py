@@ -90,7 +90,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_extensions',
     'corsheaders',
-    'nested_admin',
     'ckeditor',
     'ckeditor_uploader',
     'polymorphic',
