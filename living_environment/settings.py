@@ -29,6 +29,7 @@ env = environ.Env(
     FEEDBACK_SYSTEM_URL=(str, ''),
     FEEDBACK_SERVICE_CODE=(str, ''),
     FRONTEND_APP_URL=(str, ''),
+    STATIC_URL=(str, '/static/'),
 )
 if os.path.exists(env_file):
     env.read_env(env_file)
@@ -53,9 +54,9 @@ RAVEN_CONFIG = {'dsn': env.str('SENTRY_DSN'), 'release': version}
 
 var_root = env.path('VAR_ROOT')
 MEDIA_ROOT = var_root('media')
-STATIC_ROOT = var_root('static')
 MEDIA_URL = "/media/"
-STATIC_URL = "/static/"
+STATIC_ROOT = var_root('static')
+STATIC_URL = '{}/'.format(env.str('STATIC_URL').rstrip('/'))
 
 ROOT_URLCONF = 'living_environment.urls'
 WSGI_APPLICATION = 'living_environment.wsgi.application'
