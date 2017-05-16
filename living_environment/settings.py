@@ -94,6 +94,7 @@ INSTALLED_APPS = [
     'ckeditor',
     'ckeditor_uploader',
     'polymorphic',
+    'sortedm2m',
 ]
 
 MIDDLEWARE_CLASSES = [

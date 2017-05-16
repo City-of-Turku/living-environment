@@ -5,6 +5,8 @@ from django.utils.translation import ugettext_lazy as _
 from djgeojson.fields import GeometryField, PointField
 from polymorphic.models import PolymorphicModel
 
+from assignments.fields import SortedAsSelectedManyToManyField
+
 
 class Assignment(models.Model):
     """
@@ -164,7 +166,8 @@ class BudgetingTask(Task):
     amount_of_consumption = models.DecimalField(_('amount of consumption'), max_digits=10, decimal_places=2,
                                                 help_text=_('Number of units required to be spent on the task'),
                                                 default=0)
-    targets = models.ManyToManyField(BudgetingTarget, related_name='budgeting_tasks', verbose_name=_('budget targets'))
+    targets = SortedAsSelectedManyToManyField(BudgetingTarget, related_name='budgeting_tasks',
+                                              verbose_name=_('budget targets'))
     budgeting_type = models.IntegerField(_('type'), choices=TYPE_CHOICES, default=TEXT_TYPE)
 
     class Meta:
