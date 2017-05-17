@@ -30,7 +30,6 @@ class BudgetingTargetSerializer(serializers.ModelSerializer):
 class BudgetingTaskSerializer(serializers.ModelSerializer):
     targets = BudgetingTargetSerializer(many=True)
     unit = serializers.SerializerMethodField()
-    budgeting_type = serializers.SerializerMethodField()
 
     class Meta:
         model = BudgetingTask
@@ -39,9 +38,6 @@ class BudgetingTaskSerializer(serializers.ModelSerializer):
 
     def get_unit(self, obj):
         return obj.get_unit_display()
-
-    def get_budgeting_type(self, obj):
-        return obj.get_budgeting_type_display()
 
 
 class VoluntarySignupTaskSerializer(serializers.ModelSerializer):
