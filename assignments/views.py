@@ -2,12 +2,9 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet, ViewSet
-from rest_framework_extensions.mixins import NestedViewSetMixin
 
-from assignments.models import Assignment, Section
-from assignments.serializers import (
-    AssignmentSerializer, ReportAssignmentSerializer, SectionSerializer, SubmitAnswersSerializer
-)
+from assignments.models import Assignment
+from assignments.serializers import AssignmentSerializer, ReportAssignmentSerializer, SubmitAnswersSerializer
 
 
 class AssignmentViewSet(ReadOnlyModelViewSet):
@@ -19,11 +16,6 @@ class AssignmentViewSet(ReadOnlyModelViewSet):
         Get only opened assignments
         """
         return Assignment.objects.filter(status=Assignment.STATUS_OPEN)
-
-
-class SectionsViewSet(NestedViewSetMixin, ReadOnlyModelViewSet):
-    serializer_class = SectionSerializer
-    queryset = Section.objects.filter(assignment__status=Assignment.STATUS_OPEN)
 
 
 class SubmitAnswersViewSet(ViewSet):
