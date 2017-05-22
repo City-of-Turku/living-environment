@@ -149,3 +149,13 @@ FEEDBACK_SYSTEM_URL = env.str('FEEDBACK_SYSTEM_URL')
 FEEDBACK_SERVICE_CODE = env.str('FEEDBACK_SERVICE_CODE')
 
 FRONTEND_APP_URL = env.str('FRONTEND_APP_URL').rstrip('/')
+
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ]
+}
+
+# Enable Browsable API only in debug mode
+if DEBUG:
+    REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'].append('rest_framework.renderers.BrowsableAPIRenderer')
