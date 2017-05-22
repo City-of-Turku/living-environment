@@ -142,6 +142,7 @@ class ReportAssignmentViewSet(RetrieveModelMixin, GenericViewSet):
 
     Get all answers for specified assignment on report generation
     Answers can be additionally filtered by school and school class using query string
+
     - **Query string parameters**:
         - *school*: school DB id
         - *school_class*: school class DB id

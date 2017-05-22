@@ -141,11 +141,16 @@ class VoluntarySignupSerializer(serializers.Serializer):
 
 
 class SubmitAnswersSerializer(serializers.Serializer):
-    school = serializers.PrimaryKeyRelatedField(queryset=School.objects.all())
-    school_class = serializers.PrimaryKeyRelatedField(queryset=SchoolClass.objects.all())
-    open_text_tasks = OpenTextAnswerSerializer(many=True, required=False, allow_null=True)
-    budgeting_targets = BudgetingTargetAnswerSerializer(many=True, required=False, allow_null=True)
-    voluntary_tasks = VoluntarySignupSerializer(many=True, required=False, allow_null=True)
+    school = serializers.PrimaryKeyRelatedField(queryset=School.objects.all(),
+                                                help_text='school DB id')
+    school_class = serializers.PrimaryKeyRelatedField(queryset=SchoolClass.objects.all(),
+                                                      help_text='school class DB id')
+    open_text_tasks = OpenTextAnswerSerializer(many=True, required=False, allow_null=True,
+                                               help_text='list of open text task answers')
+    budgeting_targets = BudgetingTargetAnswerSerializer(many=True, required=False, allow_null=True,
+                                                        help_text='list of budgeting target answers')
+    voluntary_tasks = VoluntarySignupSerializer(many=True, required=False, allow_null=True,
+                                                help_text='voluntary task answers')
 
     def validate_school(self, value):
         if not value.assignments.filter(slug=self.context['assignment_slug']).exists():
