@@ -132,7 +132,7 @@ class TestApi:
     def test_open_text_answers_school_data_saved_successfully(self, answers_submit_data):
         api_client = APIClient()
         assignment = Assignment.objects.get()
-        answers_url = reverse('assignments:answers', args=[assignment.slug])
+        answers_url = reverse('assignments:answers-list', args=[assignment.slug])
         api_client.post(answers_url, json.dumps(answers_submit_data), content_type='application/json')
         open_text_answers = OpenTextAnswer.objects.all()
         open_text_school_no = open_text_answers.filter(
@@ -144,7 +144,7 @@ class TestApi:
     def test_budgeting_answers_school_data_saved_successfully(self, answers_submit_data):
         api_client = APIClient()
         assignment = Assignment.objects.get()
-        answers_url = reverse('assignments:answers', args=[assignment.slug])
+        answers_url = reverse('assignments:answers-list', args=[assignment.slug])
         api_client.post(answers_url, json.dumps(answers_submit_data), content_type='application/json')
         budgeting_answers = BudgetingTargetAnswer.objects.all()
         budgeting_answers_school_no = budgeting_answers.filter(
@@ -156,7 +156,7 @@ class TestApi:
     def test_answers_data_open_text_submitted_successfully(self, answers_submit_data):
         api_client = APIClient()
         assignment = Assignment.objects.get()
-        answers_url = reverse('assignments:answers', args=[assignment.slug])
+        answers_url = reverse('assignments:answers-list', args=[assignment.slug])
         api_client.post(answers_url, json.dumps(answers_submit_data), content_type='application/json')
         for open_text_answer in answers_submit_data['open_text_tasks']:
             task = OpenTextTask.objects.filter(id=open_text_answer['task']).first()
@@ -167,7 +167,7 @@ class TestApi:
     def test_answers_data_budgeting_targets_submitted_successfully(self, answers_submit_data):
         api_client = APIClient()
         assignment = Assignment.objects.get()
-        answers_url = reverse('assignments:answers', args=[assignment.slug])
+        answers_url = reverse('assignments:answers-list', args=[assignment.slug])
         api_client.post(answers_url, json.dumps(answers_submit_data), content_type='application/json')
         for budgeting_target in answers_submit_data['budgeting_targets']:
             task = BudgetingTask.objects.filter(id=budgeting_target['task']).first()
@@ -183,7 +183,7 @@ class TestApi:
     def test_answers_data_voluntary_signup_submitted_successfully(self, answers_submit_with_voluntary_data):
         api_client = APIClient()
         assignment = Assignment.objects.get()
-        answers_url = reverse('assignments:answers', args=[assignment.slug])
+        answers_url = reverse('assignments:answers-list', args=[assignment.slug])
         with patch('assignments.helper.urllib.request.urlopen') as urlopen_mock:
             api_client.post(answers_url, json.dumps(answers_submit_with_voluntary_data),
                             content_type='application/json')
@@ -196,7 +196,7 @@ class TestApi:
         voluntary_signup_data[0].pop('lat')
         api_client = APIClient()
         assignment = Assignment.objects.get()
-        answers_url = reverse('assignments:answers', args=[assignment.slug])
+        answers_url = reverse('assignments:answers-list', args=[assignment.slug])
         with patch('assignments.helper.urllib.request.urlopen'):
             response = api_client.post(answers_url, json.dumps(answers_submit_with_voluntary_data),
                                        content_type='application/json')
@@ -206,7 +206,7 @@ class TestApi:
     def test_bad_missing_submission_data_failed_to_save(self, answers_submit_data):
         api_client = APIClient()
         assignment = Assignment.objects.get()
-        answers_url = reverse('assignments:answers', args=[assignment.slug])
+        answers_url = reverse('assignments:answers-list', args=[assignment.slug])
         answers_submit_data.pop('school')
         response = api_client.post(answers_url, json.dumps(answers_submit_data), content_type='application/json')
         assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -221,7 +221,7 @@ class TestApi:
         })
         api_client = APIClient()
         assignment = Assignment.objects.get()
-        answers_url = reverse('assignments:answers', args=[assignment.slug])
+        answers_url = reverse('assignments:answers-list', args=[assignment.slug])
         response = api_client.post(answers_url, json.dumps(answers_submit_data), content_type='application/json')
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert BudgetingTargetAnswer.objects.count() == 0
@@ -236,14 +236,14 @@ class TestApi:
         answers_submit_data['budgeting_targets'] = changed_targets
         api_client = APIClient()
         assignment = Assignment.objects.get()
-        answers_url = reverse('assignments:answers', args=[assignment.slug])
+        answers_url = reverse('assignments:answers-list', args=[assignment.slug])
         response = api_client.post(answers_url, json.dumps(answers_submit_data), content_type='application/json')
         assert response.status_code == status.HTTP_201_CREATED
 
     @pytest.mark.django_db
     def test_report_with_wrong_assignment_slug_not_found(self, answers):
         api_client = APIClient()
-        answers_url = reverse('assignments:answers', args=['fake_assignment'])
+        answers_url = reverse('assignments:report-detail', args=['fake_assignment'])
         response = api_client.get(answers_url)
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
@@ -251,7 +251,7 @@ class TestApi:
     def test_report_submissions_count_correct(self, answers):
         api_client = APIClient()
         assignment = Assignment.objects.get()
-        answers_url = reverse('assignments:answers', args=[assignment.slug])
+        answers_url = reverse('assignments:report-detail', args=[assignment.slug])
         response = api_client.get(answers_url)
         response_data = response.json()
         submissions = {
@@ -272,7 +272,7 @@ class TestApi:
     def test_report_contains_all_open_text_answers(self, answers):
         api_client = APIClient()
         assignment = Assignment.objects.get()
-        answers_url = reverse('assignments:answers', args=[assignment.slug])
+        answers_url = reverse('assignments:report-detail', args=[assignment.slug])
         response = api_client.get(answers_url)
         response_data = response.json()
         open_text_answers_ids = OpenTextAnswer.objects.filter(
@@ -289,7 +289,7 @@ class TestApi:
     def test_report_contains_all_budgeting_answers(self, answers):
         api_client = APIClient()
         assignment = Assignment.objects.get()
-        answers_url = reverse('assignments:answers', args=[assignment.slug])
+        answers_url = reverse('assignments:report-detail', args=[assignment.slug])
         response = api_client.get(answers_url)
         response_data = response.json()
         budgeting_answers_ids = BudgetingTargetAnswer.objects.filter(
