@@ -1,4 +1,5 @@
 from django.contrib.admin import AdminSite
+from django.contrib.auth.models import Group, User
 from django.utils.translation import ugettext_lazy as _
 
 from assignments.admin import AssignmentAdmin, BudgetingTargetAdmin, SectionAdmin
@@ -18,3 +19,5 @@ admin_site.register(Section, SectionAdmin)
 admin_site.register(BudgetingTarget, BudgetingTargetAdmin)
 admin_site.register(School)
 admin_site.register(SchoolClass)
+admin_site.register(User)
+admin_site.register(Group)
