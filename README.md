@@ -53,6 +53,7 @@ FEEDBACK_SERVICE_CODE | str | service code used for voluntary tasks. Code can be
 CORS_ORIGIN_WHITELIST | list | A list of origin hostnames that are authorized to make cross-site HTTP requests.
 FRONTEND_APP_URL | str | absolute site url used as a link from admin page
 STATIC_URL | str | absolute or relative site url used for serving static files
+MEDIA_URL | str | absolute or relative site url used for serving media files
 
 ## Running tests
 
