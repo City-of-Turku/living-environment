@@ -110,9 +110,9 @@ class OpenTextTask(Task):
         """
         answers = self.open_text_answers.all()
         if school:
-            answers = answers.filter(submission__school__name=school)
+            answers = answers.filter(submission__school=school)
         if school_class:
-            answers = answers.filter(submission__school_class__name=school_class)
+            answers = answers.filter(submission__school_class=school_class)
         return answers
 
     @property
@@ -180,9 +180,9 @@ class BudgetingTask(Task):
         """
         answers = self.budgeting_answers.all()
         if school:
-            answers = answers.filter(submission__school__name=school)
+            answers = answers.filter(submission__school=school)
         if school_class:
-            answers = answers.filter(submission__school_class__name=school_class)
+            answers = answers.filter(submission__school_class=school_class)
         return answers
 
     @property
