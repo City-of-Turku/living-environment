@@ -78,18 +78,25 @@ class SubmitAnswersViewSet(CreateModelMixin, GenericViewSet):
     """
     Submit assignment answers
 
-    Submit answers for specified assignment.
     - **Input JSON fields**:
         - *school*: school DB id
         - *school_class*: school class DB id
         - *open_text_tasks*: list of open text task answers
             - *task*: open text task DB id this answer is related to
             - *answer*: submitted answer related to the task
-        - *budgeting_targets*:
+        - *budgeting_targets*: list of budgeting target answers
             - *task*: budgeting task DB id this target answer is related to
             - *target*: budgeting target DB id this target answer is related to
             - *amount*: amount that has been set by user as an answer for this target
             - *point*: coordinates of the point placed by user on the map [only for map targets]
+        - *voluntary_tasks*: list of voluntary task answers
+            - *first_name*: volunteer's first name
+            - *last_name*: volunteer's last name
+            - *email*: volunteer's email
+            - *phone*: volunteer's phone
+            - *description*: in form of 'school name/class name'
+            - *lat*: latitude of voluntary work point
+            - *long*: longitude of voluntary work point
     - **Example**:
 
             {
@@ -140,6 +147,37 @@ class ReportAssignmentViewSet(RetrieveModelMixin, GenericViewSet):
         - *school_class*: school class DB id
     - **Example**:
         `https://www.example.com/api/report/<slug>/?school=1&&school_class=2`
+    - **Output JSON fields**:
+        - *name*: assignment name
+        - *sections*: list of assignment sections:
+            - *title*: section title
+            - *open_text_tasks*: list of open text tasks in section:
+                - *question*: open text task question
+                - *answers*: list of answers:
+                    - *id*: answer DB id
+                    - *task*: open text task DB id
+                    - *answer*: submitted answer
+            - *budgeting_tasks*: list of budgeting tasks in section:
+                - *name*: name of budgeting task
+                - *answers*: list of budgeting target answers:
+                    - *id*: answer DB id
+                    - *amount*: budgeting target answer submitted amount
+                    - *point*: budgeting target answer point placed [only for map targets]
+                    - *target*: budgeting targets related to the answer
+                        - *id*: target DB id
+                        - *name*: target name
+                        - *unit_price*: price of one target unit
+                        - *reference_amount*: amount spent by public service
+                        - *min_amount*: minimum amount set
+                        - *max_amount*: maximum amount set
+                        - *icon*: target icon [only for map targets]
+            - *submissions*: Submissions statistics
+                - *per_class*: list of submitted answers grouped by class
+                    - *school_class__name*: school class name
+                    - *count*: number of submitted answers
+                - *per_school*: list of submitted answers grouped by school
+                    - *school__name*: school name
+                    - *count*: number of submitted answers
     """
 
     serializer_class = ReportAssignmentSerializer
