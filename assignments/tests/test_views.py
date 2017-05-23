@@ -12,6 +12,7 @@ from assignments.models import (
     Assignment, BudgetingTarget, BudgetingTargetAnswer, BudgetingTask, OpenTextAnswer, OpenTextTask, Submission, Task,
     VoluntarySignupTask
 )
+from assignments.tests.factories import AdminFactory
 
 
 class TestApi:
@@ -301,3 +302,19 @@ class TestApi:
                 for answer_data in budgeting_task['answers']:
                     report_answers_ids.append(answer_data['id'])
         assert sorted(list(budgeting_answers_ids)) == sorted(report_answers_ids)
+
+    @pytest.mark.django_db
+    def test_api_docs_unauthorized_user_forbidden(self):
+        client = APIClient()
+        docs_url = reverse('api-docs:docs-index')
+        response = client.get(docs_url)
+        assert response.status_code == 403
+
+    @pytest.mark.django_db
+    def test_api_docs_authorized_user_succeed(self):
+        admin_user = AdminFactory()
+        client = APIClient()
+        client.force_authenticate(user=admin_user)
+        docs_url = reverse('api-docs:docs-index')
+        response = client.get(docs_url)
+        assert response.status_code == 200
