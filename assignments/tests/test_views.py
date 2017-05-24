@@ -9,8 +9,10 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 from assignments.models import (
-    Assignment, BudgetingTarget, BudgetingTargetAnswer, BudgetingTask, OpenTextAnswer, OpenTextTask, Submission, Task
+    Assignment, BudgetingTarget, BudgetingTargetAnswer, BudgetingTask, OpenTextAnswer, OpenTextTask, Submission, Task,
+    VoluntarySignupTask
 )
+from assignments.tests.factories import AdminFactory
 
 
 class TestApi:
@@ -97,6 +99,21 @@ class TestApi:
         assert sorted(list(budget_tasks_ids)) == sorted(budgeting_tasks_response_ids)
 
     @pytest.mark.django_db
+    def test_all_voluntary_tasks_present_in_section_for_open_assignment(self, create_assignments):
+        assignment = Assignment.objects.get(status=Assignment.STATUS_OPEN)
+        api_client = APIClient()
+        voluntary_tasks_ids = VoluntarySignupTask.objects.filter(section__assignment=assignment).values_list('id',
+                                                                                                             flat=True)
+        response = api_client.get(reverse('assignments:assignment-detail', args=[assignment.slug]))
+        response_data = response.json()
+        voluntary_tasks_response_ids = []
+        for section in response_data['sections']:
+            for task in section['tasks']:
+                if task['task_type'] == 'voluntary_signup_task':
+                    voluntary_tasks_response_ids.append(task['id'])
+        assert sorted(list(voluntary_tasks_ids)) == sorted(voluntary_tasks_response_ids)
+
+    @pytest.mark.django_db
     def test_all_budget_targets_present_in_budget_tasks_for_open_assignment(self, create_assignments,
                                                                             assignments_url):
         assignment = Assignment.objects.get(status=Assignment.STATUS_OPEN)
@@ -116,7 +133,7 @@ class TestApi:
     def test_open_text_answers_school_data_saved_successfully(self, answers_submit_data):
         api_client = APIClient()
         assignment = Assignment.objects.get()
-        answers_url = reverse('assignments:answers', args=[assignment.slug])
+        answers_url = reverse('assignments:answers-list', args=[assignment.slug])
         api_client.post(answers_url, json.dumps(answers_submit_data), content_type='application/json')
         open_text_answers = OpenTextAnswer.objects.all()
         open_text_school_no = open_text_answers.filter(
@@ -128,7 +145,7 @@ class TestApi:
     def test_budgeting_answers_school_data_saved_successfully(self, answers_submit_data):
         api_client = APIClient()
         assignment = Assignment.objects.get()
-        answers_url = reverse('assignments:answers', args=[assignment.slug])
+        answers_url = reverse('assignments:answers-list', args=[assignment.slug])
         api_client.post(answers_url, json.dumps(answers_submit_data), content_type='application/json')
         budgeting_answers = BudgetingTargetAnswer.objects.all()
         budgeting_answers_school_no = budgeting_answers.filter(
@@ -140,7 +157,7 @@ class TestApi:
     def test_answers_data_open_text_submitted_successfully(self, answers_submit_data):
         api_client = APIClient()
         assignment = Assignment.objects.get()
-        answers_url = reverse('assignments:answers', args=[assignment.slug])
+        answers_url = reverse('assignments:answers-list', args=[assignment.slug])
         api_client.post(answers_url, json.dumps(answers_submit_data), content_type='application/json')
         for open_text_answer in answers_submit_data['open_text_tasks']:
             task = OpenTextTask.objects.filter(id=open_text_answer['task']).first()
@@ -148,10 +165,10 @@ class TestApi:
             assert task.open_text_answers.filter(answer=open_text_answer['answer']).exists()
 
     @pytest.mark.django_db
-    def test_answers_data_bugdeting_targets_submitted_successfully(self, answers_submit_data):
+    def test_answers_data_budgeting_targets_submitted_successfully(self, answers_submit_data):
         api_client = APIClient()
         assignment = Assignment.objects.get()
-        answers_url = reverse('assignments:answers', args=[assignment.slug])
+        answers_url = reverse('assignments:answers-list', args=[assignment.slug])
         api_client.post(answers_url, json.dumps(answers_submit_data), content_type='application/json')
         for budgeting_target in answers_submit_data['budgeting_targets']:
             task = BudgetingTask.objects.filter(id=budgeting_target['task']).first()
@@ -163,10 +180,34 @@ class TestApi:
                                                         'coordinates': budgeting_target['point']}).exists()
 
     @pytest.mark.django_db
+    @override_settings(FEEDBACK_SYSTEM_URL='http://test-feedback/')
+    def test_answers_data_voluntary_signup_submitted_successfully(self, answers_submit_with_voluntary_data):
+        api_client = APIClient()
+        assignment = Assignment.objects.get()
+        answers_url = reverse('assignments:answers-list', args=[assignment.slug])
+        with patch('assignments.helper.urllib.request.urlopen') as urlopen_mock:
+            api_client.post(answers_url, json.dumps(answers_submit_with_voluntary_data),
+                            content_type='application/json')
+        assert urlopen_mock.called
+
+    @pytest.mark.django_db
+    @override_settings(FEEDBACK_SYSTEM_URL='http://test-feedback/')
+    def test_validation_failed_with_incorrect_voluntary_signup_post_data(self, answers_submit_with_voluntary_data):
+        voluntary_signup_data = answers_submit_with_voluntary_data['voluntary_tasks']
+        voluntary_signup_data[0].pop('lat')
+        api_client = APIClient()
+        assignment = Assignment.objects.get()
+        answers_url = reverse('assignments:answers-list', args=[assignment.slug])
+        with patch('assignments.helper.urllib.request.urlopen'):
+            response = api_client.post(answers_url, json.dumps(answers_submit_with_voluntary_data),
+                                       content_type='application/json')
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    @pytest.mark.django_db
     def test_bad_missing_submission_data_failed_to_save(self, answers_submit_data):
         api_client = APIClient()
         assignment = Assignment.objects.get()
-        answers_url = reverse('assignments:answers', args=[assignment.slug])
+        answers_url = reverse('assignments:answers-list', args=[assignment.slug])
         answers_submit_data.pop('school')
         response = api_client.post(answers_url, json.dumps(answers_submit_data), content_type='application/json')
         assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -181,7 +222,7 @@ class TestApi:
         })
         api_client = APIClient()
         assignment = Assignment.objects.get()
-        answers_url = reverse('assignments:answers', args=[assignment.slug])
+        answers_url = reverse('assignments:answers-list', args=[assignment.slug])
         response = api_client.post(answers_url, json.dumps(answers_submit_data), content_type='application/json')
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert BudgetingTargetAnswer.objects.count() == 0
@@ -196,14 +237,14 @@ class TestApi:
         answers_submit_data['budgeting_targets'] = changed_targets
         api_client = APIClient()
         assignment = Assignment.objects.get()
-        answers_url = reverse('assignments:answers', args=[assignment.slug])
+        answers_url = reverse('assignments:answers-list', args=[assignment.slug])
         response = api_client.post(answers_url, json.dumps(answers_submit_data), content_type='application/json')
         assert response.status_code == status.HTTP_201_CREATED
 
     @pytest.mark.django_db
     def test_report_with_wrong_assignment_slug_not_found(self, answers):
         api_client = APIClient()
-        answers_url = reverse('assignments:answers', args=['fake_assignment'])
+        answers_url = reverse('assignments:report-detail', args=['fake_assignment'])
         response = api_client.get(answers_url)
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
@@ -211,7 +252,7 @@ class TestApi:
     def test_report_submissions_count_correct(self, answers):
         api_client = APIClient()
         assignment = Assignment.objects.get()
-        answers_url = reverse('assignments:answers', args=[assignment.slug])
+        answers_url = reverse('assignments:report-detail', args=[assignment.slug])
         response = api_client.get(answers_url)
         response_data = response.json()
         submissions = {
@@ -232,7 +273,7 @@ class TestApi:
     def test_report_contains_all_open_text_answers(self, answers):
         api_client = APIClient()
         assignment = Assignment.objects.get()
-        answers_url = reverse('assignments:answers', args=[assignment.slug])
+        answers_url = reverse('assignments:report-detail', args=[assignment.slug])
         response = api_client.get(answers_url)
         response_data = response.json()
         open_text_answers_ids = OpenTextAnswer.objects.filter(
@@ -249,7 +290,7 @@ class TestApi:
     def test_report_contains_all_budgeting_answers(self, answers):
         api_client = APIClient()
         assignment = Assignment.objects.get()
-        answers_url = reverse('assignments:answers', args=[assignment.slug])
+        answers_url = reverse('assignments:report-detail', args=[assignment.slug])
         response = api_client.get(answers_url)
         response_data = response.json()
         budgeting_answers_ids = BudgetingTargetAnswer.objects.filter(
@@ -263,21 +304,17 @@ class TestApi:
         assert sorted(list(budgeting_answers_ids)) == sorted(report_answers_ids)
 
     @pytest.mark.django_db
-    @override_settings(FEEDBACK_SYSTEM_URL='http://test-feedback/')
-    def test_voluntary_signup_service_called_with_correct_post_data(self, voluntary_signup_data):
-        api_client = APIClient()
-        signup_url = reverse('assignments:signup-list')
-        with patch('assignments.serializers.urllib.request.urlopen') as urlopen_mock:
-            api_client.post(signup_url, data=json.dumps(voluntary_signup_data),
-                            content_type='application/json')
-        assert urlopen_mock.called
+    def test_api_docs_unauthorized_user_forbidden(self):
+        client = APIClient()
+        docs_url = reverse('api-docs:docs-index')
+        response = client.get(docs_url)
+        assert response.status_code == 403
 
     @pytest.mark.django_db
-    def test_voluntary_signup_validation_failed_with_incorrect_post_data(self, voluntary_signup_data):
-        voluntary_signup_data.pop('lat')
-        api_client = APIClient()
-        signup_url = reverse('assignments:signup-list')
-        with patch('assignments.serializers.urllib.request.urlopen'):
-            response = api_client.post(signup_url, data=json.dumps(voluntary_signup_data),
-                                       content_type='application/json')
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
+    def test_api_docs_authorized_user_succeed(self):
+        admin_user = AdminFactory()
+        client = APIClient()
+        client.force_authenticate(user=admin_user)
+        docs_url = reverse('api-docs:docs-index')
+        response = client.get(docs_url)
+        assert response.status_code == 200

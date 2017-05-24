@@ -1,13 +1,10 @@
 import sys
-import urllib.error
-import urllib.parse
-import urllib.request
 
 from django.conf import settings
 from django.db.models import Count
 from rest_framework import serializers
 
-from assignments.exceptions import FeedbackSystemException
+from assignments.helper import post_to_feedback_system
 from assignments.models import (
     Assignment, BudgetingTarget, BudgetingTargetAnswer, BudgetingTask, OpenTextAnswer, OpenTextTask, School,
     SchoolClass, Section, Submission, Task, VoluntarySignupTask
@@ -19,7 +16,7 @@ SERIALIZERS_MODULE = sys.modules[__name__]
 class OpenTextTaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = OpenTextTask
-        fields = ['id', 'question']
+        fields = ['question']
 
 
 class BudgetingTargetSerializer(serializers.ModelSerializer):
@@ -33,24 +30,20 @@ class BudgetingTargetSerializer(serializers.ModelSerializer):
 class BudgetingTaskSerializer(serializers.ModelSerializer):
     targets = BudgetingTargetSerializer(many=True)
     unit = serializers.SerializerMethodField()
-    budgeting_type = serializers.SerializerMethodField()
 
     class Meta:
         model = BudgetingTask
-        fields = ['id', 'name', 'unit', 'budgeting_type', 'targets', 'amount_of_consumption']
+        fields = ['name', 'unit', 'budgeting_type', 'targets', 'amount_of_consumption']
         read_only_fields = ('name', 'unit', 'amount_of_consumption')
 
     def get_unit(self, obj):
         return obj.get_unit_display()
 
-    def get_budgeting_type(self, obj):
-        return obj.get_budgeting_type_display()
-
 
 class VoluntarySignupTaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = VoluntarySignupTask
-        fields = ['id', 'name']
+        fields = ['name']
 
 
 class TaskSerializer(serializers.ModelSerializer):
@@ -132,11 +125,32 @@ class BudgetingTargetAnswerSerializer(serializers.ModelSerializer):
         return get_json_data
 
 
+class VoluntarySignupSerializer(serializers.Serializer):
+    first_name = serializers.CharField(max_length=255)
+    last_name = serializers.CharField(max_length=255)
+    email = serializers.EmailField(allow_blank=True)
+    phone = serializers.CharField(max_length=255, allow_blank=True)
+    description = serializers.CharField(max_length=512)
+    lat = serializers.DecimalField(max_digits=None, decimal_places=None, min_value=-90, max_value=90)
+    long = serializers.DecimalField(max_digits=None, decimal_places=None, min_value=-180, max_value=180)
+
+    def to_internal_value(self, data):
+        validated_data = super(VoluntarySignupSerializer, self).to_internal_value(data)
+        validated_data['service_code'] = settings.FEEDBACK_SERVICE_CODE
+        return validated_data
+
+
 class SubmitAnswersSerializer(serializers.Serializer):
-    school = serializers.PrimaryKeyRelatedField(queryset=School.objects.all())
-    school_class = serializers.PrimaryKeyRelatedField(queryset=SchoolClass.objects.all())
-    open_text_tasks = OpenTextAnswerSerializer(many=True)
-    budgeting_targets = BudgetingTargetAnswerSerializer(many=True)
+    school = serializers.PrimaryKeyRelatedField(queryset=School.objects.all(),
+                                                help_text='school DB id')
+    school_class = serializers.PrimaryKeyRelatedField(queryset=SchoolClass.objects.all(),
+                                                      help_text='school class DB id')
+    open_text_tasks = OpenTextAnswerSerializer(many=True, required=False, allow_null=True,
+                                               help_text='list of open text task answers')
+    budgeting_targets = BudgetingTargetAnswerSerializer(many=True, required=False, allow_null=True,
+                                                        help_text='list of budgeting target answers')
+    voluntary_tasks = VoluntarySignupSerializer(many=True, required=False, allow_null=True,
+                                                help_text='voluntary task answers')
 
     def validate_school(self, value):
         if not value.assignments.filter(slug=self.context['assignment_slug']).exists():
@@ -153,12 +167,14 @@ class SubmitAnswersSerializer(serializers.Serializer):
                                                         school_class=self.validated_data['school_class'])
         open_text_answers = [OpenTextAnswer(
             submission=submission_instance,
-            **open_text_data) for open_text_data in self.validated_data['open_text_tasks']]
+            **open_text_data) for open_text_data in self.validated_data.get('open_text_tasks', [])]
         OpenTextAnswer.objects.bulk_create(open_text_answers)
         budgeting_target_answers = [BudgetingTargetAnswer(
             submission=submission_instance,
-            **budgeting_text_data) for budgeting_text_data in self.validated_data['budgeting_targets']]
+            **budgeting_text_data) for budgeting_text_data in self.validated_data.get('budgeting_targets', [])]
         BudgetingTargetAnswer.objects.bulk_create(budgeting_target_answers)
+        for voluntary_data in self.validated_data.get('voluntary_tasks', []):
+            post_to_feedback_system(settings.FEEDBACK_SYSTEM_URL, voluntary_data)
 
 
 # serializers used for getting answers for report generation
@@ -231,27 +247,3 @@ class ReportAssignmentSerializer(serializers.ModelSerializer):
             'per_school': submissions_per_school,
             'per_class': submissions_per_class
         }
-
-
-class VoluntarySignupSerializer(serializers.Serializer):
-    first_name = serializers.CharField(max_length=255)
-    last_name = serializers.CharField(max_length=255)
-    email = serializers.EmailField(allow_blank=True)
-    phone = serializers.CharField(max_length=255, allow_blank=True)
-    description = serializers.CharField(max_length=512)
-    lat = serializers.DecimalField(max_digits=None, decimal_places=None, min_value=-90, max_value=90)
-    long = serializers.DecimalField(max_digits=None, decimal_places=None, min_value=-180, max_value=180)
-
-    def to_internal_value(self, data):
-        validated_data = super(VoluntarySignupSerializer, self).to_internal_value(data)
-        validated_data['service_code'] = settings.FEEDBACK_SERVICE_CODE
-        return validated_data
-
-    def save(self):
-        data = urllib.parse.urlencode(self.validated_data)
-        data = data.encode('utf-8')
-        req = urllib.request.Request(settings.FEEDBACK_SYSTEM_URL, data)
-        try:
-            urllib.request.urlopen(req)
-        except urllib.error.URLError:
-            raise FeedbackSystemException()

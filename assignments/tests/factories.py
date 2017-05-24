@@ -1,5 +1,6 @@
 import factory
 import factory.fuzzy
+from django.contrib.auth.models import User
 from django.utils.text import slugify
 
 from assignments import models
@@ -71,6 +72,15 @@ class BudgetingTaskFactory(factory.DjangoModelFactory):
                 self.targets.add(target)
 
 
+class VoluntaryTaskFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.VoluntarySignupTask
+
+    name = factory.fuzzy.FuzzyText()
+    section = factory.SubFactory(SectionFactory)
+    order_number = factory.fuzzy.FuzzyInteger(0, 100)
+
+
 class SchoolFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.School
@@ -119,3 +129,12 @@ class BudgetingTargetAnswerFactory(factory.DjangoModelFactory):
     target = factory.SubFactory(BudgetingTargetFactory)
     amount = factory.fuzzy.FuzzyDecimal(2, 20, precision=2)
     point = '{"type": "Point", "coordinates": [100, 200]}'
+
+
+class AdminFactory(factory.Factory):
+    class Meta:
+        model = User
+
+    first_name = 'Admin'
+    last_name = 'User'
+    is_staff = True

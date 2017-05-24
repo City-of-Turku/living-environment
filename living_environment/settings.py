@@ -29,6 +29,8 @@ env = environ.Env(
     FEEDBACK_SYSTEM_URL=(str, ''),
     FEEDBACK_SERVICE_CODE=(str, ''),
     FRONTEND_APP_URL=(str, ''),
+    STATIC_URL=(str, '/static/'),
+    MEDIA_URL=(str, '/media/'),
 )
 if os.path.exists(env_file):
     env.read_env(env_file)
@@ -53,9 +55,9 @@ RAVEN_CONFIG = {'dsn': env.str('SENTRY_DSN'), 'release': version}
 
 var_root = env.path('VAR_ROOT')
 MEDIA_ROOT = var_root('media')
+MEDIA_URL = '{}/'.format(env.str('MEDIA_URL').rstrip('/'))
 STATIC_ROOT = var_root('static')
-MEDIA_URL = "/media/"
-STATIC_URL = "/static/"
+STATIC_URL = '{}/'.format(env.str('STATIC_URL').rstrip('/'))
 
 ROOT_URLCONF = 'living_environment.urls'
 WSGI_APPLICATION = 'living_environment.wsgi.application'
@@ -89,10 +91,10 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_extensions',
     'corsheaders',
-    'nested_admin',
     'ckeditor',
     'ckeditor_uploader',
     'polymorphic',
+    'sortedm2m',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -148,3 +150,13 @@ FEEDBACK_SYSTEM_URL = env.str('FEEDBACK_SYSTEM_URL')
 FEEDBACK_SERVICE_CODE = env.str('FEEDBACK_SERVICE_CODE')
 
 FRONTEND_APP_URL = env.str('FRONTEND_APP_URL').rstrip('/')
+
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ]
+}
+
+# Enable Browsable API only in debug mode
+if DEBUG:
+    REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'].append('rest_framework.renderers.BrowsableAPIRenderer')

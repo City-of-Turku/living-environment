@@ -5,6 +5,8 @@ from django.utils.translation import ugettext_lazy as _
 from djgeojson.fields import GeometryField, PointField
 from polymorphic.models import PolymorphicModel
 
+from assignments.fields import SortedAsSelectedManyToManyField
+
 
 class Assignment(models.Model):
     """
@@ -29,7 +31,8 @@ class Assignment(models.Model):
     budget = models.DecimalField(_('budget'), max_digits=10, decimal_places=2, default=0)
     schools = models.ManyToManyField('School', related_name='assignments', verbose_name=_('schools'))
     slug = models.SlugField(max_length=80, unique=True,
-                            help_text=_('The user-friendly URL identifier ex. www.example.com/runosmaen-koulu'))
+                            help_text=_('The user-friendly URL identifier ex. {}/minun-runosmakeni/'.format(
+                                settings.FRONTEND_APP_URL or 'http://www.example.com')))
 
     class Meta:
         verbose_name = _('Assignment')
@@ -107,9 +110,9 @@ class OpenTextTask(Task):
         """
         answers = self.open_text_answers.all()
         if school:
-            answers = answers.filter(submission__school__name=school)
+            answers = answers.filter(submission__school=school)
         if school_class:
-            answers = answers.filter(submission__school_class__name=school_class)
+            answers = answers.filter(submission__school_class=school_class)
         return answers
 
     @property
@@ -163,7 +166,8 @@ class BudgetingTask(Task):
     amount_of_consumption = models.DecimalField(_('amount of consumption'), max_digits=10, decimal_places=2,
                                                 help_text=_('Number of units required to be spent on the task'),
                                                 default=0)
-    targets = models.ManyToManyField(BudgetingTarget, related_name='budgeting_tasks', verbose_name=_('budget targets'))
+    targets = SortedAsSelectedManyToManyField(BudgetingTarget, related_name='budgeting_tasks',
+                                              verbose_name=_('budget targets'))
     budgeting_type = models.IntegerField(_('type'), choices=TYPE_CHOICES, default=TEXT_TYPE)
 
     class Meta:
@@ -176,9 +180,9 @@ class BudgetingTask(Task):
         """
         answers = self.budgeting_answers.all()
         if school:
-            answers = answers.filter(submission__school__name=school)
+            answers = answers.filter(submission__school=school)
         if school_class:
-            answers = answers.filter(submission__school_class__name=school_class)
+            answers = answers.filter(submission__school_class=school_class)
         return answers
 
     @property

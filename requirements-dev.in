@@ -1,8 +1,7 @@
--r requirements.txt
 autoflake
 autopep8
 django-debug-toolbar
-django-extensions
+factory-boy>=2.8.1
 flake8
 importmagic
 ipython
@@ -14,6 +13,5 @@ pydocstyle
 pytest
 pytest-cov
 pytest-django
-factory-boy>=2.8.1
 rope
 yapf
