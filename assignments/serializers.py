@@ -204,7 +204,7 @@ class ReportBudgetingTaskSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BudgetingTask
-        fields = ['name', 'answers']
+        fields = ['name', 'budgeting_type', 'answers']
 
     def get_answers(self, obj):
         answers = obj.get_answers(**self.context['query_params'])
@@ -237,7 +237,7 @@ class ReportAssignmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Assignment
-        fields = ['name', 'sections', 'submissions']
+        fields = ['name', 'area', 'sections', 'submissions']
 
     def get_submissions(self, obj):
         submissions = obj.get_submissions(**self.context['query_params'])
