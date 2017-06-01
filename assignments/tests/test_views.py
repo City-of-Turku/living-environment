@@ -204,6 +204,17 @@ class TestApi:
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     @pytest.mark.django_db
+    @override_settings(FEEDBACK_SYSTEM_URL='')
+    def test_validation_failed_with_empty_feedback_system_url(self, answers_submit_with_voluntary_data):
+        api_client = APIClient()
+        assignment = Assignment.objects.get()
+        answers_url = reverse('assignments:answers-list', args=[assignment.slug])
+        with patch('assignments.helper.urllib.request.urlopen'):
+            response = api_client.post(answers_url, json.dumps(answers_submit_with_voluntary_data),
+                                       content_type='application/json')
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    @pytest.mark.django_db
     def test_bad_missing_submission_data_failed_to_save(self, answers_submit_data):
         api_client = APIClient()
         assignment = Assignment.objects.get()
