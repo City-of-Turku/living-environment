@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
+from django.conf import settings
 from django.contrib.admin import widgets
+from django.forms import ModelForm
+from django.utils.translation import ugettext as _
 from sortedm2m.forms import SortedMultipleChoiceField
 
 
@@ -48,3 +51,13 @@ class SortedAsSelectedMultipleChoiceField(SortedMultipleChoiceField):
                                           is_stacked=kwargs.get('is_stacked', False))
         super(SortedAsSelectedMultipleChoiceField, self).__init__(queryset, required, widget, label, initial,
                                                                   help_text=help_text, *args, **kwargs)
+
+
+class AssignmentForm(ModelForm):
+    """
+    Customize model form in order to support dynamically created help text for slug field
+    """
+    def __init__(self, *args, **kwargs):
+        super(AssignmentForm, self).__init__(*args, **kwargs)
+        self.fields['slug'].help_text = _('The user-friendly URL identifier ex. {}/minun-runosmakeni/'.format(
+            settings.FRONTEND_APP_URL or 'http://www.example.com'))
