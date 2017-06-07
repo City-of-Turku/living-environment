@@ -5,6 +5,7 @@ from django.utils.translation import ugettext as _
 from leaflet.admin import LeafletGeoAdmin
 from polymorphic.admin import PolymorphicInlineSupportMixin, StackedPolymorphicInline
 
+from assignments.forms import AssignmentForm
 from assignments.models import (
     Assignment, BudgetingTarget, BudgetingTask, OpenTextTask, Section, Task, VoluntarySignupTask
 )
@@ -98,6 +99,7 @@ class AssignmentAdmin(LeafletGeoAdmin):
     inlines = (
         SectionInline,
     )
+    form = AssignmentForm
 
     class Media:
         """

@@ -30,9 +30,7 @@ class Assignment(models.Model):
     status = models.IntegerField(_('status'), choices=STATUS_CHOICES, default=STATUS_OPEN)
     budget = models.DecimalField(_('budget'), max_digits=10, decimal_places=2, default=0)
     schools = models.ManyToManyField('School', related_name='assignments', verbose_name=_('schools'))
-    slug = models.SlugField(max_length=80, unique=True,
-                            help_text=_('The user-friendly URL identifier ex. {}/minun-runosmakeni/'.format(
-                                settings.FRONTEND_APP_URL or 'http://www.example.com')))
+    slug = models.SlugField(max_length=80, unique=True)
 
     class Meta:
         verbose_name = _('Assignment')
