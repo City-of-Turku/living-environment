@@ -242,7 +242,8 @@ class ReportAssignmentSerializer(serializers.ModelSerializer):
     def get_submissions(self, obj):
         submissions = obj.get_submissions(**self.context['query_params'])
         submissions_per_school = submissions.values('school__name').annotate(count=Count('id')).order_by('school__name')
-        submissions_per_class = submissions.values('school_class__name').annotate(count=Count('id')).order_by()
+        submissions_per_class = submissions.values('school_class__name').annotate(count=Count('id')).order_by(
+            'school_class__name')
         return {
             'per_school': submissions_per_school,
             'per_class': submissions_per_class
