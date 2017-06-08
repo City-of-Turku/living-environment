@@ -150,6 +150,7 @@ class ReportAssignmentViewSet(RetrieveModelMixin, GenericViewSet):
         `https://www.example.com/api/report/<slug>/?school=1&&school_class=2`
     - **Output JSON fields**:
         - *name*: assignment name
+        - *area*: coordinates of assignment map area
         - *sections*: list of assignment sections:
             - *title*: section title
             - *open_text_tasks*: list of open text tasks in section:
@@ -160,6 +161,7 @@ class ReportAssignmentViewSet(RetrieveModelMixin, GenericViewSet):
                     - *answer*: submitted answer
             - *budgeting_tasks*: list of budgeting tasks in section:
                 - *name*: name of budgeting task
+                - *budgeting_type*: budgeting task type [text/map]
                 - *answers*: list of budgeting target answers:
                     - *id*: answer DB id
                     - *amount*: budgeting target answer submitted amount
