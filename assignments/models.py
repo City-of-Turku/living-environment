@@ -197,6 +197,7 @@ class SchoolClass(models.Model):
     class Meta:
         verbose_name = _('class')
         verbose_name_plural = _('classes')
+        ordering = ['name']
 
     def __str__(self):
         return self.name
