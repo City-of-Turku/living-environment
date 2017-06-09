@@ -21,15 +21,21 @@ class Assignment(models.Model):
         (STATUS_CLOSED, _('Closed'))
     )
 
-    name = models.CharField(_('name'), max_length=128, unique=True)
-    header = models.CharField(_('header'), max_length=255, null=True)
-    description = RichTextUploadingField(_('description'), blank=True)
+    name = models.CharField(_('name'), max_length=128, unique=True, help_text=_('Assignment name'))
+    header = models.CharField(_('header'), max_length=255, null=True,
+                              help_text=_('Text used as a header of the landing section'))
+    description = RichTextUploadingField(_('description'), blank=True,
+                                         help_text=_('Text used as a description of the landing section'))
     image = models.ImageField(_('image'), upload_to='assignment/image/',
-                              blank=True, null=True)
-    area = GeometryField(_('area'))
-    status = models.IntegerField(_('status'), choices=STATUS_CHOICES, default=STATUS_OPEN)
-    budget = models.DecimalField(_('budget'), max_digits=10, decimal_places=2, default=0)
-    schools = models.ManyToManyField('School', related_name='assignments', verbose_name=_('schools'))
+                              blank=True, null=True, help_text=_('Main image of the landing section'))
+    area = GeometryField(_('area'), help_text=_('Area name'))
+    status = models.IntegerField(_('status'), choices=STATUS_CHOICES, default=STATUS_OPEN,
+                                 help_text=_(
+                                     'Status of the assignment. Only opened assignments are presented to the users'))
+    budget = models.DecimalField(_('budget'), max_digits=10, decimal_places=2, default=0,
+                                 help_text=_('Budget allocated for the assignment'))
+    schools = models.ManyToManyField('School', related_name='assignments', verbose_name=_('schools'),
+                                     help_text=_('Schools that are participating in the assignment<br>'))
     slug = models.SlugField(max_length=80, unique=True)
 
     class Meta:
@@ -58,10 +64,12 @@ class Section(models.Model):
     """
     Section is a part of assignment with tasks related to it.
     """
-    title = models.CharField(_('title'), max_length=255)
-    description = RichTextUploadingField(_('description'), blank=True)
-    assignment = models.ForeignKey(Assignment, related_name='sections', verbose_name=_('Assignment'))
-    video = models.URLField(null=True, blank=True)
+    title = models.CharField(_('title'), max_length=255, help_text=_('Section title'))
+    description = RichTextUploadingField(_('description'), blank=True,
+                                         help_text=_('Text used as a section description'))
+    assignment = models.ForeignKey(Assignment, related_name='sections', verbose_name=_('Assignment'),
+                                   help_text=_('Assignment this section is related to'))
+    video = models.URLField(null=True, blank=True, help_text=_('YouTube URL of the video embedded in the section'))
     order_number = models.IntegerField(_('order number'), default=0,
                                        help_text=_('Order in which sections are shown'))
 
@@ -78,7 +86,8 @@ class Task(PolymorphicModel):
     """
     Parent model for all task types.
     """
-    section = models.ForeignKey(Section, related_name='tasks', on_delete=models.CASCADE)
+    section = models.ForeignKey(Section, related_name='tasks', on_delete=models.CASCADE,
+                                help_text=_('Section this task is related to'))
     order_number = models.IntegerField(_('order number'), default=0, help_text=_('Order in which tasks are shown'))
 
     class Meta:
@@ -96,7 +105,8 @@ class OpenTextTask(Task):
     """
     Simple question task where the answer is placed in text area
     """
-    question = models.TextField(_('question'))
+    question = models.TextField(_('question'),
+                                help_text=_('Question answered as a plain text'))
 
     class Meta:
         verbose_name = _('open text task')
@@ -127,12 +137,21 @@ class BudgetingTarget(models.Model):
     on this target. Min and max amount should be defined for targets with value in a certain range.
     """
 
-    name = models.CharField(_('name'), max_length=255)
-    unit_price = models.DecimalField(_('price'), max_digits=10, decimal_places=2, default=0)
-    reference_amount = models.DecimalField(_('reference amount'), max_digits=10, decimal_places=2, default=0)
-    min_amount = models.DecimalField(_('min amount'), max_digits=10, decimal_places=2, default=0)
-    max_amount = models.DecimalField(_('max amount'), max_digits=10, decimal_places=2, null=True, blank=True)
-    icon = models.FileField(_('icon'), upload_to='target/icons/', blank=True, null=True)
+    name = models.CharField(_('name'), max_length=255,
+                            help_text=_('Budgeting target name'))
+    unit_price = models.DecimalField(_('unit price'), max_digits=10, decimal_places=2, default=0,
+                                     help_text=_('Price for a single target unit'))
+    reference_amount = models.DecimalField(_('reference amount'), max_digits=10, decimal_places=2, default=0,
+                                           help_text=_('Amount spent by public service that can be used as a reference '
+                                                       'value for the answer'))
+    min_amount = models.DecimalField(_('min amount'), max_digits=10, decimal_places=2, default=0,
+                                     help_text=_('Minimum amount that should be spent on the target.<br>'
+                                                 'Used in validation of entered value. Defaults to 0'))
+    max_amount = models.DecimalField(_('max amount'), max_digits=10, decimal_places=2, null=True, blank=True,
+                                     help_text=_('Maximum amount that can be spent on the target.<br>'
+                                                 'If set, it is used in validation of entered value'))
+    icon = models.FileField(_('icon'), upload_to='target/icons/', blank=True, null=True,
+                            help_text=_('Budgeting target icon. If not set, default icon is used'))
 
     class Meta:
         verbose_name = _('budget target')
@@ -159,14 +178,17 @@ class BudgetingTask(Task):
         (MAP_TYPE, _('map'))
     )
 
-    name = models.CharField(_('name'), max_length=255)
-    unit = models.IntegerField(_('unit'), choices=UNIT_CHOICES, default=UNIT_HA)
+    name = models.CharField(_('name'), max_length=255, help_text=_('Budgeting task name'))
+    unit = models.IntegerField(_('unit'), choices=UNIT_CHOICES, default=UNIT_HA,
+                               help_text=_('Unit in which task amount is expressed'))
     amount_of_consumption = models.DecimalField(_('amount of consumption'), max_digits=10, decimal_places=2,
                                                 help_text=_('Number of units required to be spent on the task'),
                                                 default=0)
     targets = SortedAsSelectedManyToManyField(BudgetingTarget, related_name='budgeting_tasks',
-                                              verbose_name=_('budget targets'))
-    budgeting_type = models.IntegerField(_('type'), choices=TYPE_CHOICES, default=TEXT_TYPE)
+                                              verbose_name=_('budget targets'),
+                                              help_text=_('Budgeting targets related to the task<br>'))
+    budgeting_type = models.IntegerField(_('type'), choices=TYPE_CHOICES, default=TEXT_TYPE,
+                                         help_text=_('Budgeting task type'))
 
     class Meta:
         verbose_name = _('budgeting task')
@@ -195,8 +217,8 @@ class SchoolClass(models.Model):
     name = models.CharField(_('name'), max_length=255)
 
     class Meta:
-        verbose_name = _('class')
-        verbose_name_plural = _('classes')
+        verbose_name = _('grade')
+        verbose_name_plural = _('grades')
         ordering = ['name']
 
     def __str__(self):
@@ -204,8 +226,8 @@ class SchoolClass(models.Model):
 
 
 class School(models.Model):
-    name = models.CharField(_('name'), max_length=255)
-    classes = models.ManyToManyField(SchoolClass, related_name='schools', verbose_name=_('classes'))
+    name = models.CharField(_('name'), max_length=255, help_text=_('School name'))
+    classes = models.ManyToManyField(SchoolClass, related_name='schools', verbose_name=_('grades'))
 
     class Meta:
         verbose_name = _('school')
@@ -248,7 +270,7 @@ class VoluntarySignupTask(Task):
     """
     Task defines voluntary actions participant can submit to.
     """
-    name = models.CharField(_('name'), max_length=255)
+    name = models.CharField(_('name'), max_length=255, help_text=_('Name of the voluntary task'))
 
     class Meta:
         verbose_name = _('voluntary signup task')

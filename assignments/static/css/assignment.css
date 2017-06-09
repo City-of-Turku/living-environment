@@ -5,3 +5,14 @@ td.original p {
 .inline-group .tabular tr.has_original td {
     padding-top: 8px;
 }
+
+fieldset.inner-group > h2 {
+    border-bottom-style: solid;
+    border-bottom-width: 2px;
+    border-bottom-color: #BBB;
+    background-color: #e6e6e6;
+    text-transform: none;
+    color: #666;
+    font-weight: bold;
+    padding: 5px;
+}

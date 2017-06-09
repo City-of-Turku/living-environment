@@ -15,15 +15,22 @@ from assignments.models import (
 class BudgetingTargetAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {
-            'fields': ('name', 'unit_price', 'reference_amount', 'icon')
+            'fields': ('name', 'unit_price', 'icon')
         }),
-        (_('Amount range'), {
-            'fields': [('min_amount', 'max_amount')]
+        (_('Additional data for budgeting text task'), {
+            'classes': ('inner-group',),
+            'fields': ('reference_amount', ('min_amount', 'max_amount'))
         })
     )
 
 
 class TaskInline(StackedPolymorphicInline):
+    class Media:
+        """
+        We are trying to remove section name from inline forms
+        """
+        css = {"all": ("css/assignment.css",)}
+
     class OpenTextInline(StackedPolymorphicInline.Child):
         extra = 0
         model = OpenTextTask
@@ -31,6 +38,20 @@ class TaskInline(StackedPolymorphicInline):
     class BudgetingTaskInline(StackedPolymorphicInline.Child):
         extra = 0
         model = BudgetingTask
+        fieldsets = (
+            (None, {
+                'classes': ('inner-group',),
+                'fields': ('order_number', 'name', 'budgeting_type')
+            }),
+            (_('Targets'), {
+                'classes': ('inner-group',),
+                'fields': ('targets',)
+            }),
+            (_('Units'), {
+                'classes': ('inner-group',),
+                'fields': ('unit', 'amount_of_consumption')
+            }),
+        )
 
     class VoluntarySignupTaskInline(StackedPolymorphicInline.Child):
         extra = 0
@@ -54,6 +75,7 @@ class SectionAdmin(PolymorphicInlineSupportMixin, admin.ModelAdmin):
     list_editable = ('order_number',)
     list_filter = ('assignment',)
     inlines = (TaskInline,)
+    fields = ('order_number', 'assignment', 'title', 'description', 'video')
 
 
 class SectionInline(admin.TabularInline):
@@ -100,6 +122,23 @@ class AssignmentAdmin(LeafletGeoAdmin):
         SectionInline,
     )
     form = AssignmentForm
+    fieldsets = (
+        (None, {
+            'fields': ('name', 'slug', 'status')
+        }),
+        (_('Area information'), {
+            'classes': ('inner-group',),
+            'fields': ('area', 'schools'),
+        }),
+        (_('Landing section'), {
+            'classes': ('inner-group',),
+            'fields': ('image', 'header', 'description'),
+        }),
+        (_('Budgeting'), {
+            'classes': ('inner-group',),
+            'fields': ('budget',),
+        }),
+    )
 
     class Media:
         """
