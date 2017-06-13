@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.shortcuts import reverse
 from django.utils.html import format_html
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 from leaflet.admin import LeafletGeoAdmin
 from polymorphic.admin import PolymorphicInlineSupportMixin, StackedPolymorphicInline
 
@@ -17,7 +17,7 @@ class BudgetingTargetAdmin(admin.ModelAdmin):
         (None, {
             'fields': ('name', 'unit_price', 'icon')
         }),
-        (_('Additional data for budgeting text task'), {
+        (_('Additional fields for budgeting text task'), {
             'classes': ('inner-group',),
             'fields': ('reference_amount', ('min_amount', 'max_amount'))
         })
@@ -47,7 +47,7 @@ class TaskInline(StackedPolymorphicInline):
                 'classes': ('inner-group',),
                 'fields': ('targets',)
             }),
-            (_('Units'), {
+            (_('Additional fields for budgeting text task'), {
                 'classes': ('inner-group',),
                 'fields': ('unit', 'amount_of_consumption')
             }),

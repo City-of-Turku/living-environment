@@ -2,7 +2,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 
 from assignments.exceptions import FeedbackSystemException
 

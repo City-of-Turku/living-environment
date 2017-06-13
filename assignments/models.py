@@ -28,7 +28,7 @@ class Assignment(models.Model):
                                          help_text=_('Text used as a description of the landing section'))
     image = models.ImageField(_('image'), upload_to='assignment/image/',
                               blank=True, null=True, help_text=_('Main image of the landing section'))
-    area = GeometryField(_('area'), help_text=_('Area name'))
+    area = GeometryField(_('area'), help_text=_('Select the map area for the assignment'))
     status = models.IntegerField(_('status'), choices=STATUS_CHOICES, default=STATUS_OPEN,
                                  help_text=_(
                                      'Status of the assignment. Only opened assignments are presented to the users'))
@@ -214,7 +214,7 @@ class BudgetingTask(Task):
 
 
 class SchoolClass(models.Model):
-    name = models.CharField(_('name'), max_length=255)
+    name = models.CharField(_('name'), max_length=255, help_text=_('Grade name'))
 
     class Meta:
         verbose_name = _('grade')

@@ -2,7 +2,8 @@
 from django.conf import settings
 from django.contrib.admin import widgets
 from django.forms import ModelForm
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
+
 from sortedm2m.forms import SortedMultipleChoiceField
 
 
@@ -59,5 +60,5 @@ class AssignmentForm(ModelForm):
     """
     def __init__(self, *args, **kwargs):
         super(AssignmentForm, self).__init__(*args, **kwargs)
-        self.fields['slug'].help_text = _('The user-friendly URL identifier ex. {}/minun-runosmakeni/'.format(
-            settings.FRONTEND_APP_URL or 'http://www.example.com'))
+        self.fields['slug'].help_text = _('The user-friendly URL identifier ex. {}/minun-runosmakeni/').format(
+            settings.FRONTEND_APP_URL or 'http://www.example.com')
