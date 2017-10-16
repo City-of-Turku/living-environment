@@ -1,7 +1,7 @@
 from ckeditor_uploader.fields import RichTextUploadingField
 from django.conf import settings
 from django.db import models
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 from djgeojson.fields import GeometryField, PointField
 from polymorphic.models import PolymorphicModel
 
@@ -167,9 +167,11 @@ class BudgetingTask(Task):
     """
     UNIT_HA = 0
     UNIT_PCS = 1
+    UNIT_KM = 2
     UNIT_CHOICES = (
         (UNIT_HA, _('ha')),
-        (UNIT_PCS, _('pcs'))
+        (UNIT_KM, _('km')),
+        (UNIT_PCS, _('pcs')),
     )
     TEXT_TYPE = 0
     MAP_TYPE = 1
