@@ -174,7 +174,7 @@ class SubmitAnswersSerializer(serializers.Serializer):
             **budgeting_text_data) for budgeting_text_data in self.validated_data.get('budgeting_targets', [])]
         BudgetingTargetAnswer.objects.bulk_create(budgeting_target_answers)
         for voluntary_data in self.validated_data.get('voluntary_tasks', []):
-            post_to_feedback_system(settings.FEEDBACK_SYSTEM_URL, voluntary_data)
+            post_to_feedback_system(settings.FEEDBACK_SYSTEM_URL, voluntary_data, api_key=settings.FEEDBACK_API_KEY)
 
 
 # serializers used for getting answers for report generation
