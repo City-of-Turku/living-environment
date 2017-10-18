@@ -28,6 +28,7 @@ env = environ.Env(
     CORS_ORIGIN_WHITELIST=(list, []),
     FEEDBACK_SYSTEM_URL=(str, ''),
     FEEDBACK_SERVICE_CODE=(str, ''),
+    FEEDBACK_API_KEY=(str, ''),
     FRONTEND_APP_URL=(str, ''),
     STATIC_URL=(str, '/static/'),
     MEDIA_URL=(str, '/media/'),
@@ -148,6 +149,7 @@ CORS_ORIGIN_WHITELIST = env.list('CORS_ORIGIN_WHITELIST')
 # VOLUNTARY TASKS
 FEEDBACK_SYSTEM_URL = env.str('FEEDBACK_SYSTEM_URL')
 FEEDBACK_SERVICE_CODE = env.str('FEEDBACK_SERVICE_CODE')
+FEEDBACK_API_KEY = env.str('FEEDBACK_API_KEY')
 
 FRONTEND_APP_URL = env.str('FRONTEND_APP_URL').rstrip('/')
 
