@@ -157,8 +157,16 @@ class BudgetingTarget(models.Model):
         verbose_name = _('budget target')
         verbose_name_plural = _('budget targets')
 
+    @property
+    def max_amount_humanized(self):
+        return self.max_amount if self.max_amount is not None else ''
+
     def __str__(self):
-        return self.name
+        return '{} | {} | {} | {} - {}'.format(self.name,
+                                               self.unit_price,
+                                               self.reference_amount,
+                                               self.min_amount,
+                                               self.max_amount_humanized)
 
 
 class BudgetingTask(Task):
