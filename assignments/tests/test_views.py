@@ -186,6 +186,8 @@ class TestApi:
         assignment = Assignment.objects.get()
         answers_url = reverse('assignments:answers-list', args=[assignment.slug])
         with patch('assignments.helper.urllib.request.urlopen') as urlopen_mock:
+            response = urlopen_mock.return_value
+            response.reason = 'OK'
             api_client.post(answers_url, json.dumps(answers_submit_with_voluntary_data),
                             content_type='application/json')
         assert urlopen_mock.called
