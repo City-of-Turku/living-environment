@@ -2,6 +2,7 @@ import sys
 
 from django.conf import settings
 from django.db.models import Count
+from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers
 
 from assignments.helper import post_to_feedback_system
@@ -151,6 +152,7 @@ class SubmitAnswersSerializer(serializers.Serializer):
                                                         help_text='list of budgeting target answers')
     voluntary_tasks = VoluntarySignupSerializer(many=True, required=False, allow_null=True,
                                                 help_text='voluntary task answers')
+    feedback_system_success = serializers.SerializerMethodField()
 
     def validate_school(self, value):
         if not value.assignments.filter(slug=self.context['assignment_slug']).exists():
@@ -173,8 +175,16 @@ class SubmitAnswersSerializer(serializers.Serializer):
             submission=submission_instance,
             **budgeting_text_data) for budgeting_text_data in self.validated_data.get('budgeting_targets', [])]
         BudgetingTargetAnswer.objects.bulk_create(budgeting_target_answers)
+        self.context['feedback_success_messages'] = []
         for voluntary_data in self.validated_data.get('voluntary_tasks', []):
-            post_to_feedback_system(settings.FEEDBACK_SYSTEM_URL, voluntary_data, api_key=settings.FEEDBACK_API_KEY)
+            response = post_to_feedback_system(settings.FEEDBACK_SYSTEM_URL, voluntary_data,
+                                               api_key=settings.FEEDBACK_API_KEY)
+            self.context['feedback_success_messages'].append(response)
+
+    def get_feedback_system_success(self, obj):
+        if self.context.get('feedback_success_messages', []):
+            return _('Feedback system: ') + ';'.join(set(self.context['feedback_success_messages']))
+        return ''
 
 
 # serializers used for getting answers for report generation

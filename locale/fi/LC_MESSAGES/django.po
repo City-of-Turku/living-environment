@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-13 15:10+0300\n"
+"POT-Creation-Date: 2017-11-28 16:47+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,367 +18,375 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: .\assignments\admin.py:20 .\assignments\admin.py:50
+#: assignments/admin.py:20 assignments/admin.py:50
 msgid "Additional fields for budgeting text task"
 msgstr "Lisäkentät budjetoinnin tekstitehtävälle"
 
-#: .\assignments\admin.py:46
+#: assignments/admin.py:46
 msgid "Targets"
 msgstr "Kohteet"
 
-#: .\assignments\admin.py:66
+#: assignments/admin.py:66
 msgid "task"
 msgstr "tehtävä"
 
-#: .\assignments\admin.py:67
+#: assignments/admin.py:67
 msgid "tasks"
 msgstr "tehtävät"
 
-#: .\assignments\admin.py:108 .\assignments\models.py:67
+#: assignments/admin.py:108 assignments/models.py:67
 msgid "title"
 msgstr "otsikko"
 
-#: .\assignments\admin.py:129
+#: assignments/admin.py:129
 msgid "Area information"
 msgstr "Aluetiedot"
 
-#: .\assignments\admin.py:133
+#: assignments/admin.py:133
 msgid "Landing section"
 msgstr "Aloitusosio"
 
-#: .\assignments\admin.py:137
+#: assignments/admin.py:137
 msgid "Budgeting"
 msgstr "Budjetointi"
 
-#: .\assignments\apps.py:7 .\assignments\models.py:43
+#: assignments/apps.py:7 assignments/models.py:43
 msgid "Assignments"
 msgstr "Tehtävänannot"
 
-#: .\assignments\forms.py:63
+#: assignments/forms.py:63
 msgid "The user-friendly URL identifier ex. {}/minun-runosmakeni/"
 msgstr "Käyttäjäystävällinen URL-tunniste ex. www.malli.com/runosmaen-koulu"
 
-#: .\assignments\helper.py:16
-msgid "Please check if feedback system url is correctly set"
-msgstr "Tarkista, että palautejärjestelmän URL-osoite on asetettu oikein"
+#: assignments/helper.py:19
+msgid "Feedback system: please check if feedback system url is correctly set"
+msgstr "Palautejärjestelmä: Tarkista, että palautejärjestelmän asetukset ovat asetettu oikein."
 
-#: .\assignments\models.py:20
+#: assignments/helper.py:34 assignments/helper.py:36
+#: assignments/serializers.py:190
+msgid "Feedback system: "
+msgstr "Palautejärjestelmä: "
+
+#: assignments/models.py:20
 msgid "Open"
 msgstr "Avoinna"
 
-#: .\assignments\models.py:21
+#: assignments/models.py:21
 msgid "Closed"
 msgstr "Suljettu"
 
-#: .\assignments\models.py:24 .\assignments\models.py:140
-#: .\assignments\models.py:181 .\assignments\models.py:217
-#: .\assignments\models.py:229 .\assignments\models.py:273
+#: assignments/models.py:24 assignments/models.py:140
+#: assignments/models.py:191 assignments/models.py:227
+#: assignments/models.py:239 assignments/models.py:283
 msgid "name"
 msgstr "nimi"
 
-#: .\assignments\models.py:24
+#: assignments/models.py:24
 msgid "Assignment name"
 msgstr "Tehtävänannon nimi"
 
-#: .\assignments\models.py:25
+#: assignments/models.py:25
 msgid "header"
 msgstr "otsikko"
 
-#: .\assignments\models.py:26
+#: assignments/models.py:26
 msgid "Text used as a header of the landing section"
 msgstr "Tekstiä käytetään aloitusosion otsikkona"
 
-#: .\assignments\models.py:27 .\assignments\models.py:68
+#: assignments/models.py:27 assignments/models.py:68
 msgid "description"
 msgstr "kuvaus"
 
-#: .\assignments\models.py:28
+#: assignments/models.py:28
 msgid "Text used as a description of the landing section"
 msgstr "Tekstiä käytetään aloitusosion kuvauksessa"
 
-#: .\assignments\models.py:29
+#: assignments/models.py:29
 msgid "image"
 msgstr "kuva"
 
-#: .\assignments\models.py:30
+#: assignments/models.py:30
 msgid "Main image of the landing section"
 msgstr "Aloitusosion pääkuva"
 
-#: .\assignments\models.py:31
+#: assignments/models.py:31
 msgid "area"
 msgstr "alue"
 
-#: .\assignments\models.py:31
+#: assignments/models.py:31
 msgid "Select the map area for the assignment"
 msgstr "Valitse kartta-alue tehtävänannolle"
 
-#: .\assignments\models.py:32
+#: assignments/models.py:32
 msgid "status"
 msgstr "tila"
 
-#: .\assignments\models.py:34
+#: assignments/models.py:34
 msgid ""
 "Status of the assignment. Only opened assignments are presented to the users"
 msgstr ""
 "Tehtävänannon tila. Vain avoinna olevat tehtävänannot ovat käytössä "
 "käyttäjille."
 
-#: .\assignments\models.py:35
+#: assignments/models.py:35
 msgid "budget"
 msgstr "budjetti"
 
-#: .\assignments\models.py:36
+#: assignments/models.py:36
 msgid "Budget allocated for the assignment"
 msgstr "Tehtävänannolle annettu budjettimäärä"
 
-#: .\assignments\models.py:37 .\assignments\models.py:234
+#: assignments/models.py:37 assignments/models.py:244
 msgid "schools"
 msgstr "koulut"
 
-#: .\assignments\models.py:38
+#: assignments/models.py:38
 msgid "Schools that are participating in the assignment<br>"
 msgstr "Koulut, jotka osallistuvat tehtävänantoon<br>"
 
-#: .\assignments\models.py:42 .\assignments\models.py:70
+#: assignments/models.py:42 assignments/models.py:70
 msgid "Assignment"
 msgstr "Tehtävänanto"
 
-#: .\assignments\models.py:67
+#: assignments/models.py:67
 msgid "Section title"
 msgstr "Tehtäväosion otsikko, joka näytetään tehtäväosiossa"
 
-#: .\assignments\models.py:69
+#: assignments/models.py:69
 msgid "Text used as a section description"
 msgstr "Tehtäväosion kuvausteksti, joka näytetään tehtäväosiossa"
 
-#: .\assignments\models.py:71
+#: assignments/models.py:71
 msgid "Assignment this section is related to"
 msgstr "Tehtävänanto, johon tämä osio on asetettu"
 
-#: .\assignments\models.py:72
+#: assignments/models.py:72
 msgid "YouTube URL of the video embedded in the section"
 msgstr "YouTube videon URL-osoite, joka upotetaan tehtäväosioon"
 
-#: .\assignments\models.py:73 .\assignments\models.py:91
+#: assignments/models.py:73 assignments/models.py:91
 msgid "order number"
 msgstr "järjestys"
 
-#: .\assignments\models.py:74
+#: assignments/models.py:74
 msgid "Order in which sections are shown"
 msgstr "Järjestys, jossa tehtäväosat näytetään"
 
-#: .\assignments\models.py:77
+#: assignments/models.py:77
 msgid "Section"
 msgstr "Tehtäväosio"
 
-#: .\assignments\models.py:78
+#: assignments/models.py:78
 msgid "Sections"
 msgstr "Tehtävänosiot"
 
-#: .\assignments\models.py:90
+#: assignments/models.py:90
 msgid "Section this task is related to"
 msgstr "Tehtävä liittyy osaan"
 
-#: .\assignments\models.py:91
+#: assignments/models.py:91
 msgid "Order in which tasks are shown"
 msgstr "Järjestys, jossa tehtävät näytetään"
 
-#: .\assignments\models.py:108
+#: assignments/models.py:108
 msgid "question"
 msgstr "kysymys"
 
-#: .\assignments\models.py:109
+#: assignments/models.py:109
 msgid "Question answered as a plain text"
 msgstr "Kysymys, johon vastataan tekstillä"
 
-#: .\assignments\models.py:112
+#: assignments/models.py:112
 msgid "open text task"
 msgstr "Tekstikysymys"
 
-#: .\assignments\models.py:113
+#: assignments/models.py:113
 msgid "open text tasks"
 msgstr "Tekstikysymykset"
 
-#: .\assignments\models.py:141
+#: assignments/models.py:141
 msgid "Budgeting target name"
 msgstr "Budjettikohteen nimi"
 
-#: .\assignments\models.py:142
+#: assignments/models.py:142
 msgid "unit price"
 msgstr "Yksikköhinta"
 
-#: .\assignments\models.py:143
+#: assignments/models.py:143
 msgid "Price for a single target unit"
 msgstr "Yksittäisen kohteen hinta"
 
-#: .\assignments\models.py:144
+#: assignments/models.py:144
 msgid "reference amount"
 msgstr "viitemäärä"
 
-#: .\assignments\models.py:145
+#: assignments/models.py:145
 msgid ""
 "Amount spent by public service that can be used as a reference value for the "
 "answer"
 msgstr ""
 "Julkisen palvelun käyttämä määrä, joka näytetään viitearvona käyttäjälle"
 
-#: .\assignments\models.py:147
+#: assignments/models.py:147
 msgid "min amount"
 msgstr "pienin määrä"
 
-#: .\assignments\models.py:148
+#: assignments/models.py:148
 msgid ""
 "Minimum amount that should be spent on the target.<br>Used in validation of "
 "entered value. Defaults to 0"
 msgstr "Pienin sallittu määrä, joka pitää käyttää kohteeseen"
 
-#: .\assignments\models.py:150
+#: assignments/models.py:150
 msgid "max amount"
 msgstr "suurin määrä"
 
-#: .\assignments\models.py:151
+#: assignments/models.py:151
 msgid ""
 "Maximum amount that can be spent on the target.<br>If set, it is used in "
 "validation of entered value"
 msgstr "Suurin sallittu määrä, jonka voi käyttää kohteeseen"
 
-#: .\assignments\models.py:153
+#: assignments/models.py:153
 msgid "icon"
 msgstr "Kuva"
 
-#: .\assignments\models.py:154
+#: assignments/models.py:154
 msgid "Budgeting target icon. If not set, default icon is used"
 msgstr "Budjetointikohteen kuva"
 
-#: .\assignments\models.py:157
+#: assignments/models.py:157
 msgid "budget target"
 msgstr "budjettikohde"
 
-#: .\assignments\models.py:158 .\assignments\models.py:188
+#: assignments/models.py:158 assignments/models.py:198
 msgid "budget targets"
 msgstr "budjettikohteet"
 
-#: .\assignments\models.py:171
+#: assignments/models.py:180
 msgid "ha"
 msgstr ""
 
-#: .\assignments\models.py:172
+#: assignments/models.py:181
+msgid "km"
+msgstr ""
+
+#: assignments/models.py:182
 msgid "pcs"
 msgstr "kpl"
 
-#: .\assignments\models.py:177
+#: assignments/models.py:187
 msgid "text"
 msgstr "teksti"
 
-#: .\assignments\models.py:178
+#: assignments/models.py:188
 msgid "map"
 msgstr "kartta"
 
-#: .\assignments\models.py:181
+#: assignments/models.py:191
 msgid "Budgeting task name"
 msgstr "Budjetointitehtävän nimi"
 
-#: .\assignments\models.py:182
+#: assignments/models.py:192
 msgid "unit"
 msgstr "yksikkö"
 
-#: .\assignments\models.py:183
+#: assignments/models.py:193
 msgid "Unit in which task amount is expressed"
 msgstr "Yksikkö, joka näytetään tehtävän määrissä"
 
-#: .\assignments\models.py:184
+#: assignments/models.py:194
 msgid "amount of consumption"
 msgstr "Kulutettava määrä"
 
-#: .\assignments\models.py:185
+#: assignments/models.py:195
 msgid "Number of units required to be spent on the task"
 msgstr "Yksiköiden määrä, joka pitää kuluttaa tehtävässä"
 
-#: .\assignments\models.py:189
+#: assignments/models.py:199
 msgid "Budgeting targets related to the task<br>"
 msgstr "Budjetointitehtävälle asetetut budjetointikohteet<br>"
 
-#: .\assignments\models.py:190
+#: assignments/models.py:200
 msgid "type"
 msgstr "tyyppi"
 
-#: .\assignments\models.py:191
+#: assignments/models.py:201
 msgid "Budgeting task type"
 msgstr "Budjetointitehtävän tyyppi"
 
-#: .\assignments\models.py:194
+#: assignments/models.py:204
 msgid "budgeting task"
 msgstr "Budjetointitehtävä"
 
-#: .\assignments\models.py:195
+#: assignments/models.py:205
 msgid "budgeting tasks"
 msgstr "Budjetointitehtävät"
 
-#: .\assignments\models.py:217
+#: assignments/models.py:227
 msgid "Grade name"
 msgstr "Luokan nimi"
 
-#: .\assignments\models.py:220
+#: assignments/models.py:230
 msgid "grade"
 msgstr "luokka"
 
-#: .\assignments\models.py:221 .\assignments\models.py:230
+#: assignments/models.py:231 assignments/models.py:240
 msgid "grades"
 msgstr "luokat"
 
-#: .\assignments\models.py:229
+#: assignments/models.py:239
 msgid "School name"
 msgstr "Koulun nimi"
 
-#: .\assignments\models.py:233
+#: assignments/models.py:243
 msgid "school"
 msgstr "koulu"
 
-#: .\assignments\models.py:273
+#: assignments/models.py:283
 msgid "Name of the voluntary task"
 msgstr "Vapaaehtoisen rekisteröintitehtävän nimi"
 
-#: .\assignments\models.py:276
+#: assignments/models.py:286
 msgid "voluntary signup task"
 msgstr "Vapaaehtoinen rekisteröintitehtävä"
 
-#: .\assignments\models.py:277
+#: assignments/models.py:287
 msgid "voluntary signup tasks"
 msgstr "Vapaaehtoinen rekisteröintitehtävät"
 
-#: .\assignments\templates\admin\assignments\assignment\sections.html:26
+#: assignments/templates/admin/assignments/assignment/sections.html:26
 msgid "Delete?"
 msgstr "Poista?"
 
-#: .\assignments\templates\admin\assignments\assignment\sections.html:46
+#: assignments/templates/admin/assignments/assignment/sections.html:46
 msgid "Change"
 msgstr "Muuta"
 
-#: .\assignments\templates\admin\assignments\assignment\sections.html:49
+#: assignments/templates/admin/assignments/assignment/sections.html:49
 msgid "View on site"
 msgstr "Näytä sivustolla"
 
-#: .\assignments\templates\admin\assignments\assignment\sections.html:94
+#: assignments/templates/admin/assignments/assignment/sections.html:94
 #, python-format
 msgid "Add %(name)s"
 msgstr "Lisää %(name)s"
 
-#: .\living_environment\admin.py:10
+#: living_environment/admin.py:10
 msgid "Living environment - Admin"
 msgstr "Arkiympäristö - Admin"
 
-#: .\living_environment\admin.py:11
+#: living_environment/admin.py:11
 msgid "Turun Kaupunki"
 msgstr ""
 
-#: .\living_environment\admin.py:12
+#: living_environment/admin.py:12
 msgid "Site administration"
 msgstr "Sivuston hallinta"
 
-#: .\living_environment\settings.py:113
+#: living_environment/settings.py:115
 msgid "Finnish"
 msgstr "Suomeksi"
 
-#: .\living_environment\settings.py:114
-msgid "English"
-msgstr "Englanniksi"
+#~ msgid "English"
+#~ msgstr "Englanniksi"
