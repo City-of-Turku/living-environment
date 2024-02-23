@@ -2,7 +2,7 @@ import os
 
 import environ
 import raven
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 checkout_dir = environ.Path(__file__) - 2
 assert os.path.exists(checkout_dir('manage.py'))
@@ -21,7 +21,8 @@ env = environ.Env(
     SECRET_KEY=(str, ''),
     VAR_ROOT=(str, default_var_root),
     ALLOWED_HOSTS=(list, []),
-    DATABASE_URL=(str, 'postgres://living_environment:living_environment@localhost/living_environment'),
+    DATABASE_URL=(str, 'postgres:///living_environment'),
+    DISABLE_SERVER_SIDE_CURSORS=(bool, False),
     CACHE_URL=(str, 'locmemcache://'),
     EMAIL_URL=(str, 'consolemail://'),
     SENTRY_DSN=(str, ''),
@@ -43,13 +44,33 @@ except Exception:
 
 DEBUG = env.bool('DEBUG')
 TIER = env.str('TIER')
-SECRET_KEY = env.str('SECRET_KEY')
-if DEBUG and not SECRET_KEY:
-    SECRET_KEY = 'xxx'
+BASE_DIR = checkout_dir()
+
+def get_random_str():
+    import random
+    system_random = random.SystemRandom()
+    return ''.join([system_random.choice('abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)') for i in range(64)])
+
+if 'SECRET_KEY' not in locals():
+    secret_file = os.path.join(BASE_DIR, '.django_secret')
+    try:
+        with open(secret_file) as f:
+            SECRET_KEY = f.read().strip()
+    except IOError:
+        try:
+            SECRET_KEY = get_random_str()
+            secret = open(secret_file, 'w')
+            os.chmod(secret_file, 0o0600)
+            secret.write(SECRET_KEY)
+            secret.close()
+        except IOError:
+            Exception('Please create a %s file with random characters to generate your secret key!' % secret_file)
 
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS')
 
 DATABASES = {'default': env.db()}
+DATABASES['default']['ATOMIC_REQUESTS'] = True
+DATABASES['default']['DISABLE_SERVER_SIDE_CURSORS'] = env('DISABLE_SERVER_SIDE_CURSORS')
 CACHES = {'default': env.cache()}
 vars().update(env.email_url())  # EMAIL_BACKEND etc.
 RAVEN_CONFIG = {'dsn': env.str('SENTRY_DSN'), 'release': version}
@@ -84,6 +105,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'drf_yasg',
     'raven.contrib.django.raven_compat',
     'assignments',
     'leaflet',
@@ -92,23 +114,21 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_extensions',
     'corsheaders',
-    'ckeditor',
-    'ckeditor_uploader',
+    'django_ckeditor_5',
     'polymorphic',
     'sortedm2m',
 ]
 
-MIDDLEWARE_CLASSES = [
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.middleware.security.SecurityMiddleware',
 ]
 
 LANGUAGES = [
@@ -124,7 +144,7 @@ LOCALE_PATHS = (
 if DEBUG:
     INSTALLED_APPS += ['debug_toolbar']
     INTERNAL_IPS = ['127.0.0.1', 'localhost']
-    MIDDLEWARE_CLASSES.append('debug_toolbar.middleware.DebugToolbarMiddleware')
+    MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
 
 TEMPLATES = [
     {
@@ -158,6 +178,8 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.JSONRenderer',
     ]
 }
+
+DEFAULT_AUTO_FIELD='django.db.models.AutoField'
 
 # Enable Browsable API only in debug mode
 if DEBUG:

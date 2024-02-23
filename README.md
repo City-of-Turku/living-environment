@@ -25,7 +25,7 @@ To setup a database compatible with default database settings:
 
 Create user and database
 
-    sudo -u postgres createuser -P -R -S living_environment  # use password `living_environment`
+    sudo -u postgres createuser -P -R -S living_environment
     sudo -u postgres createdb -O living_environment living_environment
 
 Allow user to create test database
@@ -55,6 +55,7 @@ CORS_ORIGIN_WHITELIST | list | A list of origin hostnames that are authorized to
 FRONTEND_APP_URL | str | absolute site url used as a link from admin page
 STATIC_URL | str | absolute or relative site url used for serving static files
 MEDIA_URL | str | absolute or relative site url used for serving media files
+DATABASE_URL | str | Database URL with credentials
 
 ## Running tests
 

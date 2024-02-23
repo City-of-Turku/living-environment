@@ -1,7 +1,7 @@
 autoflake
 autopep8
 django-debug-toolbar
-factory-boy>=2.8.1
+factory-boy
 flake8
 importmagic
 ipython

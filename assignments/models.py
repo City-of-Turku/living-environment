@@ -1,7 +1,7 @@
-from ckeditor_uploader.fields import RichTextUploadingField
+from django_ckeditor_5.fields import CKEditor5Field
 from django.conf import settings
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from djgeojson.fields import GeometryField, PointField
 from polymorphic.models import PolymorphicModel
 
@@ -24,7 +24,7 @@ class Assignment(models.Model):
     name = models.CharField(_('name'), max_length=128, unique=True, help_text=_('Assignment name'))
     header = models.CharField(_('header'), max_length=255, null=True,
                               help_text=_('Text used as a header of the landing section'))
-    description = RichTextUploadingField(_('description'), blank=True,
+    description = CKEditor5Field(_('description'), blank=True,
                                          help_text=_('Text used as a description of the landing section'))
     image = models.ImageField(_('image'), upload_to='assignment/image/',
                               blank=True, null=True, help_text=_('Main image of the landing section'))
@@ -65,10 +65,10 @@ class Section(models.Model):
     Section is a part of assignment with tasks related to it.
     """
     title = models.CharField(_('title'), max_length=255, help_text=_('Section title'))
-    description = RichTextUploadingField(_('description'), blank=True,
+    description = CKEditor5Field(_('description'), blank=True,
                                          help_text=_('Text used as a section description'))
     assignment = models.ForeignKey(Assignment, related_name='sections', verbose_name=_('Assignment'),
-                                   help_text=_('Assignment this section is related to'))
+                                   help_text=_('Assignment this section is related to'), on_delete=models.CASCADE)
     video = models.URLField(null=True, blank=True, help_text=_('YouTube URL of the video embedded in the section'))
     order_number = models.IntegerField(_('order number'), default=0,
                                        help_text=_('Order in which sections are shown'))
@@ -92,10 +92,6 @@ class Task(PolymorphicModel):
 
     class Meta:
         ordering = ['order_number']
-        # Fix delete.
-        # Workaround for https://github.com/django-polymorphic/django-polymorphic/issues/229#issuecomment-246613138
-        base_manager_name = 'base_objects'
-
     @property
     def task_type(self):
         return 'basic_task'
@@ -249,8 +245,8 @@ class School(models.Model):
 
 
 class Submission(models.Model):
-    school = models.ForeignKey(School, related_name='%(class)ss')
-    school_class = models.ForeignKey(SchoolClass, related_name='%(class)ss')
+    school = models.ForeignKey(School, related_name='%(class)ss', on_delete=models.CASCADE)
+    school_class = models.ForeignKey(SchoolClass, related_name='%(class)ss', on_delete=models.CASCADE)
 
 
 class OpenTextAnswer(models.Model):
@@ -258,8 +254,8 @@ class OpenTextAnswer(models.Model):
     Answer on OpenTextTask
     """
 
-    submission = models.ForeignKey(Submission, related_name='open_text_answers')
-    task = models.ForeignKey(OpenTextTask, related_name='open_text_answers')
+    submission = models.ForeignKey(Submission, related_name='open_text_answers', on_delete=models.CASCADE)
+    task = models.ForeignKey(OpenTextTask, related_name='open_text_answers', on_delete=models.CASCADE)
     answer = models.TextField()
 
 
@@ -269,9 +265,9 @@ class BudgetingTargetAnswer(models.Model):
     uniquely connect budgeting answer with related task
     """
 
-    submission = models.ForeignKey(Submission, related_name='budgeting_answers')
-    task = models.ForeignKey(BudgetingTask, related_name='budgeting_answers')
-    target = models.ForeignKey(BudgetingTarget, related_name='budgeting_answers')
+    submission = models.ForeignKey(Submission, related_name='budgeting_answers', on_delete=models.CASCADE)
+    task = models.ForeignKey(BudgetingTask, related_name='budgeting_answers', on_delete=models.CASCADE)
+    target = models.ForeignKey(BudgetingTarget, related_name='budgeting_answers', on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     point = PointField(null=True, blank=True)
 
