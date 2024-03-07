@@ -181,6 +181,17 @@ REST_FRAMEWORK = {
 
 DEFAULT_AUTO_FIELD='django.db.models.AutoField'
 
+
+CKEDITOR_5_CONFIGS = {
+    'default': {
+        'toolbar': [
+            'heading', '|', 'bold', 'italic', 'link',
+            'bulletedList', 'numberedList', 'blockQuote', 'imageUpload',
+        ],
+
+    }
+}
+
 # Enable Browsable API only in debug mode
 if DEBUG:
     REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'].append('rest_framework.renderers.BrowsableAPIRenderer')

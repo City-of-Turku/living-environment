@@ -46,12 +46,10 @@ class SortedAsSelectedMultipleChoiceField(SortedMultipleChoiceField):
     """
     Use select widget that preserves order of selected options
     """
-    def __init__(self, queryset, required=True, label=None,
-                 initial=None, help_text='', *args, **kwargs):
+    def __init__(self, queryset, *args, **kwargs):
         widget = SortedAsSelectedMultiple(verbose_name=queryset.model._meta.verbose_name_plural,
                                           is_stacked=kwargs.get('is_stacked', False))
-        super(SortedAsSelectedMultipleChoiceField, self).__init__(queryset, required, widget, label, initial,
-                                                                  help_text=help_text, *args, **kwargs)
+        super(SortedAsSelectedMultipleChoiceField, self).__init__(queryset, *args, **kwargs)
 
 
 class AssignmentForm(ModelForm):
