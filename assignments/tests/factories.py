@@ -1,19 +1,33 @@
 import factory
 import factory.fuzzy
+import random
+
 from django.contrib.auth.models import User
 from django.utils.text import slugify
-
 from assignments import models
 
+class FuzzyArea(factory.fuzzy.BaseFuzzyAttribute):
+    def __init__(self, min, max, **defaults):
+        super(FuzzyArea, self).__init__(**defaults)
+        self.min = min
+        self.max = max
 
-class AssignmentFactory(factory.DjangoModelFactory):
+    def fuzz(self):
+        return {
+            'x': random.randint(self.min, self.max),
+            'y': random.randint(self.min, self.max)
+        }
+
+class AssignmentFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Assignment
+        skip_postgeneration_save = True
 
     name = factory.Sequence(lambda n: 'assignment_%s' % n)
     status = models.Assignment.STATUS_OPEN
     budget = factory.fuzzy.FuzzyDecimal(10000, 30000, precision=2)
     slug = factory.LazyAttribute(lambda n: slugify(n.name))
+    area = FuzzyArea(-100, 100)
 
     @factory.post_generation
     def schools(self, create, extracted, **kwargs):
@@ -24,7 +38,7 @@ class AssignmentFactory(factory.DjangoModelFactory):
                 self.schools.add(school)
 
 
-class SectionFactory(factory.DjangoModelFactory):
+class SectionFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Section
 
@@ -35,7 +49,7 @@ class SectionFactory(factory.DjangoModelFactory):
     order_number = factory.fuzzy.FuzzyInteger(0, 100)
 
 
-class OpenTextTaskFactory(factory.DjangoModelFactory):
+class OpenTextTaskFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.OpenTextTask
 
@@ -44,7 +58,7 @@ class OpenTextTaskFactory(factory.DjangoModelFactory):
     order_number = factory.fuzzy.FuzzyInteger(0, 100)
 
 
-class BudgetingTargetFactory(factory.DjangoModelFactory):
+class BudgetingTargetFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.BudgetingTarget
 
@@ -53,9 +67,10 @@ class BudgetingTargetFactory(factory.DjangoModelFactory):
     max_amount = factory.fuzzy.FuzzyDecimal(0, 10, precision=2)
 
 
-class BudgetingTaskFactory(factory.DjangoModelFactory):
+class BudgetingTaskFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.BudgetingTask
+        skip_postgeneration_save = True
 
     section = factory.SubFactory(SectionFactory)
     name = factory.Sequence(lambda n: 'budgetingtask_%s' % n)
@@ -72,7 +87,7 @@ class BudgetingTaskFactory(factory.DjangoModelFactory):
                 self.targets.add(target)
 
 
-class VoluntaryTaskFactory(factory.DjangoModelFactory):
+class VoluntaryTaskFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.VoluntarySignupTask
 
@@ -81,9 +96,10 @@ class VoluntaryTaskFactory(factory.DjangoModelFactory):
     order_number = factory.fuzzy.FuzzyInteger(0, 100)
 
 
-class SchoolFactory(factory.DjangoModelFactory):
+class SchoolFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.School
+        skip_postgeneration_save = True
 
     name = factory.Sequence(lambda n: 'school_%s' % n)
 
@@ -96,14 +112,14 @@ class SchoolFactory(factory.DjangoModelFactory):
                 self.classes.add(school_class)
 
 
-class SchoolClassFactory(factory.DjangoModelFactory):
+class SchoolClassFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.SchoolClass
 
     name = factory.Sequence(lambda n: 'class_%s' % n)
 
 
-class SubmissionFactory(factory.DjangoModelFactory):
+class SubmissionFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Submission
 
@@ -111,7 +127,7 @@ class SubmissionFactory(factory.DjangoModelFactory):
     school_class = factory.SubFactory(SchoolClassFactory)
 
 
-class OpenTextAnswerFactory(factory.DjangoModelFactory):
+class OpenTextAnswerFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.OpenTextAnswer
 
@@ -120,7 +136,7 @@ class OpenTextAnswerFactory(factory.DjangoModelFactory):
     answer = factory.fuzzy.FuzzyText()
 
 
-class BudgetingTargetAnswerFactory(factory.DjangoModelFactory):
+class BudgetingTargetAnswerFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.BudgetingTargetAnswer
 
