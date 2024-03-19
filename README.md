@@ -32,6 +32,11 @@ Allow user to create test database
 
     sudo -u postgres psql -c "ALTER USER living_environment CREATEDB;"
 
+Create extensions
+
+    sudo -u postgres psql -d living_environment -c "CREATE EXTENSION IF NOT EXISTS hstore"
+    sudo -u postgres psql -d living_environment -c "CREATE EXTENSION IF NOT EXISTS postgis"
+    
 ### Daily running
 
 * Set the `DEBUG` environment variable to `1`.
