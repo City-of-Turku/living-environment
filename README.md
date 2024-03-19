@@ -32,6 +32,11 @@ Allow user to create test database
 
     sudo -u postgres psql -c "ALTER USER living_environment CREATEDB;"
 
+Create extensions
+
+    sudo -u postgres psql -d living_environment -c "CREATE EXTENSION IF NOT EXISTS hstore"
+    sudo -u postgres psql -d living_environment -c "CREATE EXTENSION IF NOT EXISTS postgis"
+    
 ### Daily running
 
 * Set the `DEBUG` environment variable to `1`.
@@ -56,8 +61,43 @@ FRONTEND_APP_URL | str | absolute site url used as a link from admin page
 STATIC_URL | str | absolute or relative site url used for serving static files
 MEDIA_URL | str | absolute or relative site url used for serving media files
 DATABASE_URL | str | Database URL with credentials
+STATIC_ROOT | str | Path to static files
+MEDIA_ROOT | str | Path to media files
+
+
+### Starting with docker-compose
+
+.env file example:
+```
+POSTGRES_USER=example_user
+POSTGRES_PASSWORD=example_password
+POSTGRES_DB=example_database
+DATABASE_URL=postgis://example_user:example_password@db:5432/example_database
+
+ALLOWED_HOSTS=example.domain.org
+```
+
+Build and start container (production):
+```sh
+docker compose -f docker-compose.yml -f docker-compose.prod.yml up --force-recreate --build --detach --no-start
+docker compose -f docker-compose.yml -f docker-compose.prod.yml start
+```
+
+Build and start container (development):
+```sh
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up --force-recreate --build --detach --no-start
+docker compose -f docker-compose.yml -f docker-compose.dev.yml start
+```
+
+
+Apply migrations and create a superuser
+```sh
+docker compose run --env DATABASE_HOST=db --rm api apply_migrations
+docker compose run --env DATABASE_HOST=db --rm api createsuperuser
+```
+
 
 ## Running tests
 
-* Set the `DEBUG` environment variable to `1`.
-* Run `py.test`.
+- Set the `DEBUG` environment variable to `1`.
+- Run `py.test .`
