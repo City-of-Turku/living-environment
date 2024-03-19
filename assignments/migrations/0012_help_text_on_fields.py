@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 
 import assignments.fields
-import ckeditor_uploader.fields
+import django_ckeditor_5.fields
 from django.db import migrations, models
 import django.db.models.deletion
 import djgeojson.fields
@@ -33,7 +33,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='assignment',
             name='description',
-            field=ckeditor_uploader.fields.RichTextUploadingField(blank=True, help_text='Text used as a description of the landing section', verbose_name='description'),
+            field=django_ckeditor_5.fields.CKEditor5Field(blank=True, help_text='Text used as a description of the landing section', verbose_name='description'),
         ),
         migrations.AlterField(
             model_name='assignment',
@@ -133,7 +133,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='section',
             name='description',
-            field=ckeditor_uploader.fields.RichTextUploadingField(blank=True, help_text='Text used as a section description', verbose_name='description'),
+            field=django_ckeditor_5.fields.CKEditor5Field(blank=True, help_text='Text used as a section description', verbose_name='description'),
         ),
         migrations.AlterField(
             model_name='section',

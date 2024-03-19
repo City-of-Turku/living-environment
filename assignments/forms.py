@@ -2,7 +2,7 @@
 from django.conf import settings
 from django.contrib.admin import widgets
 from django.forms import ModelForm
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from sortedm2m.forms import SortedMultipleChoiceField
 
@@ -46,12 +46,10 @@ class SortedAsSelectedMultipleChoiceField(SortedMultipleChoiceField):
     """
     Use select widget that preserves order of selected options
     """
-    def __init__(self, queryset, required=True, label=None,
-                 initial=None, help_text='', *args, **kwargs):
+    def __init__(self, queryset, *args, **kwargs):
         widget = SortedAsSelectedMultiple(verbose_name=queryset.model._meta.verbose_name_plural,
                                           is_stacked=kwargs.get('is_stacked', False))
-        super(SortedAsSelectedMultipleChoiceField, self).__init__(queryset, required, widget, label, initial,
-                                                                  help_text=help_text, *args, **kwargs)
+        super(SortedAsSelectedMultipleChoiceField, self).__init__(queryset, *args, **kwargs)
 
 
 class AssignmentForm(ModelForm):
