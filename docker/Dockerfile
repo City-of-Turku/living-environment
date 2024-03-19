@@ -20,8 +20,18 @@ RUN python manage.py collectstatic --no-input
 
 ENTRYPOINT ["./docker-entrypoint.sh"]
 
+FROM setup as development
+RUN pip install -r requirements-dev.txt --no-cache-dir
+USER arkiymparisto
+ENV DEBUG=1
+ENV TIER=dev
+ENV PRODUCTION=0
+EXPOSE 8000/tcp
+
+
 FROM setup as production
 USER arkiymparisto
+ENV DEBUG=0
 ENV TIER=prod
 ENV PRODUCTION=1
 EXPOSE 8000/tcp

@@ -1,0 +1,9 @@
+services:
+  api:
+    build:
+      context: .
+      target: development
+    command: uwsgi_http_mode
+    restart: always
+  db:
+    restart: always

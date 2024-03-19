@@ -31,9 +31,12 @@ elif [ "$1" = "createsuperuser" ]; then
   shift
   _log ">> Command: createsuperuser <<"
   python manage.py createsuperuser $@
+elif [ "$1" = "uwsgi_http_mode" ]; then
+  _log "Starting the uwsgi web server (http mode)"
+  uwsgi --ini deploy/uwsgi.ini --http 0.0.0.0:8000 --check-static /var/www
 else
-  _log "Starting the uwsgi web server"
-  uwsgi --ini deploy/uwsgi.ini --check-static /var/www
+  _log "Starting the uwsgi web server (socket mode)"
+  uwsgi --ini deploy/uwsgi.ini --socket 0.0.0.0:8000 --check-static /var/www
 fi
 
 _log "Hyvä Arkiympäristö entrypoint completed..."
