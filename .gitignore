@@ -78,3 +78,5 @@ target/
 var/
 venv/
 .django_secret
+static/
+media/
