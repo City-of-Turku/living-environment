@@ -4,6 +4,6 @@ services:
       context: .
       target: development
     command: uwsgi_http_mode
-    restart: always
+    restart: "no"
   db:
-    restart: always
+    restart: "no"
