@@ -21,6 +21,9 @@ def get_description_from_errors(errors):
 
 
 def post_to_feedback_system(url, data, api_key=None):
+    if api_key:
+        data['api_key'] = api_key
+
     data = urllib.parse.urlencode(data)
     data = data.encode('utf-8')
     try:
