@@ -28,7 +28,7 @@ def create_assignments():
 
 @pytest.fixture
 def assignments_url():
-    return reverse('assignments:assignment-list')
+    return reverse('assignment-list')
 
 
 @pytest.fixture

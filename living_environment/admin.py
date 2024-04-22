@@ -1,6 +1,6 @@
 from django.contrib.admin import AdminSite
 from django.contrib.auth.models import Group, User
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from assignments.admin import AssignmentAdmin, BudgetingTargetAdmin, SectionAdmin
 from assignments.models import Assignment, BudgetingTarget, School, SchoolClass, Section

@@ -3,7 +3,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from assignments.exceptions import FeedbackSystemException
 
@@ -21,6 +21,9 @@ def get_description_from_errors(errors):
 
 
 def post_to_feedback_system(url, data, api_key=None):
+    if api_key:
+        data['api_key'] = api_key
+
     data = urllib.parse.urlencode(data)
     data = data.encode('utf-8')
     try:
